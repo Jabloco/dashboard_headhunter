@@ -1,20 +1,21 @@
 {
-    "id": "47049904",
+    "id": "47049904",  // идентификатор вакансии, берем
     "premium": false,
     "billing_type": {
         "id": "standard_plus",
         "name": "Стандарт плюс"
     },
     "relations": [],
-    "name": "Python junior",
+    "name": "Python junior",  // наименование вакансии, берем
     "insider_interview": null,
     "response_letter_required": false,
-    "area": {
+    "area": {  // регион вакансии, берем id и name
         "id": "1",
         "name": "Москва",
         "url": "https://api.hh.ru/areas/1?host=hh.ru"
     },
-    "salary": {
+    "salary": {  // зарплатная вилка, берем всё кроме gross. бывает что зп не указана совсем,
+        // нужна будет обработка как пустого словаря, так и отдельных ключей
         "from": 80000,
         "to": 150000,
         "currency": "RUR",
@@ -30,24 +31,27 @@
         "id": "hh",
         "name": "hh.ru"
     },
-    "experience": {
+    "experience": {  // опыт работы, можно взять для доп. фильтров
         "id": "noExperience",
         "name": "Нет опыта"
     },
-    "schedule": {
+    "schedule": {  // график работы, можно взять для доп. фильтров
         "id": "remote",
         "name": "Удаленная работа"
     },
-    "employment": {
+    "employment": { // занятость частичная\полная, тоже можно взять для доп. фильтров
         "id": "full",
         "name": "Полная занятость"
     },
     "department": null,
     "contacts": null,
     "description": "<p><strong>SMMplanner</strong> — это компания в портфель которой входит несколько крупных интернет проектов с большим объёмом клиентов и трафика в области SMM, ADS, ELT. Мы являемся лидером на рынке СНГ среди сервисов отложенных публикаций в социальные сети.<br /><br /><strong>Структура нашей компании в плане разработки:</strong><br />За каждым проектом закреплена своя команда, в который входит несколько backend специалистов, отдельно frontend, тестировщики и product owner.<br /><br /><strong>Задачи:</strong><br />- развитие разнообразных микросервисов и монолита веб сервиса<br />- широкий спектр задач взаимодействия с API социальных сетей<br />- создание самодокументируемого REST API<br />- медиаобработка - написание unit-тестов<br /><br /><strong>Требования:</strong><br />- Отличное знание Python 3, стандартных библиотек и PEP 8<br />- Django, Django REST framework<br />- Git<br />- Shell script<br />- понимание HTTP<br />- умение работать с реляционными базами данных<br />- стремление писать чистый, стабильный и хорошо читаемый код<br /><br /><strong>Преимуществом будет:</strong><br />- Знакомство с OAuth2 и API соц сетей<br />- Celery<br />- Docker<br />- PostgreSQL<br />- FFmpeg<br />- Unit Test</p> <p> </p>",
+    // на счет подробного описания вакансии не знаю.
+    // с одной стороны вакансии уходят в архив и их, похоже, теперь через поиск не достать если ты не работодатель. нужна прямая ссылка
+    // с другой стороны так то зачем нам это описание?
     "branded_description": null,
     "vacancy_constructor_template": null,
-    "key_skills": [
+    "key_skills": [  // ключевые навыки, обязательно, ради этого всё и затевалось
         {
             "name": "Django Framework"
         },
@@ -90,7 +94,7 @@
     ],
     "accept_handicapped": false,
     "accept_kids": false,
-    "archived": false,
+    "archived": false,  // метка архивированой вакансии, если сейчас запросить данную вакансию она будет true(она уже в архиве)
     "response_url": null,
     "specializations": [
         {
@@ -105,7 +109,7 @@
     "quick_responses_allowed": false,
     "driver_license_types": [],
     "accept_incomplete_resumes": false,
-    "employer": {
+    "employer": {  // данные о работодателе, возьмем id, name и url
         "id": "2771061",
         "name": "Данильченко Иван Сергеевич",
         "url": "https://api.hh.ru/employers/2771061?host=hh.ru",
