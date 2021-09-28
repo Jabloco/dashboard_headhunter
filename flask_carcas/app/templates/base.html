@@ -1,0 +1,29 @@
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }} - Dashboard</title>
+      {% else %}
+      <title>Welcome to Dashboard</title>
+      {% endif %}
+    </head>
+    <body>
+        <hr>
+        <div>
+            Dashboard:
+            <a href="{{ url_for('index') }}"> Home </a>
+            <a href="{{ url_for('vacancy') }}"> Vacancy </a>
+            <a href="{{ url_for('dash') }}"> Dashboard </a>
+        </div>
+        <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </body>
+</html>
