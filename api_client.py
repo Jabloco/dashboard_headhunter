@@ -6,6 +6,9 @@ logging.basicConfig(format='%(levelname)s - %(message)s',
                     filename='error.log')
 
 class HeadHunterClient:
+    API_BASE_URL = 'https://api.hh.ru/'
+    VACANCIES_LIST_PATH = 'vacancies/'
+
     def __init__(self):
         pass
         
@@ -19,6 +22,7 @@ class HeadHunterClient:
             vacancy_id - id вакансии\n
         Возвращает словарь.
         """
+        
         # проверяем входные данные
         try:
             vacancy_id = int(vacancy_id)
@@ -29,14 +33,13 @@ class HeadHunterClient:
             logging.exception(error)
             return
 
-        URL = 'https://api.hh.ru/vacancies/'
         params = {
             'host': 'hh.ru'
         }
 
         # делаем запрос
         try:
-            req = requests.get(URL + str(vacancy_id), params)
+            req = requests.get(f'{self.API_BASE_URL}{self.VACANCIES_LIST_PATH}{vacancy_id}', params)
             answer = req.json()  # декодируем и приводим к питоновскому словарю
             req.raise_for_status()
             if 'errors' in answer:
@@ -44,7 +47,7 @@ class HeadHunterClient:
         except ValueError as error:
             logging.exception(error)
             return
-        except (requests.ConnectionError, requests.HTTPError, requests.Timeout)  as error:
+        except requests.RequestException as error:
             logging.exception(error)
             return
 
@@ -65,16 +68,21 @@ class HeadHunterClient:
         }
         # проверяем зарплату и дополняем словарь
         if answer['salary'] is None:
-            data.update({
+            data.update(
+                {
                 'salary_from': None,
-                'salaty_to': None,
+                'salary_to': None,
                 'currency': None
-                })
-        else: data.update({
-            'salary_from': answer['salary']['to'],
-            'salaty_to': answer['salary']['to'],
-            'currency': answer['salary']['currency']
-            })
+                }
+            )
+        else:
+            data.update(
+                {
+                'salary_from': answer['salary']['to'],
+                'salary_to': answer['salary']['to'],
+                'currency': answer['salary']['currency']
+                }
+            )
 
         return data
 
