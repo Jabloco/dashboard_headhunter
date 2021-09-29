@@ -11,10 +11,86 @@ class HeadHunterClient:
 
     def __init__(self):
         pass
-        
-    def get_vacancies_list(self):
-       pass            
-        
+
+    def get_vacancies_list(self, vacancy_name, page, area=1) -> list:
+        """ Метод получения списка из id вакансий на странице.
+
+        Возвращает список.
+        Аргументы:
+            vacancy_name - название требуемой вакансии
+            page - номер страницы
+            area - регион, по умолчанию = 1 (Москва)
+
+        """
+        params = {
+                "area": area,
+                "st": "searchVacancy",
+                "text": vacancy_name,
+                "page": page,
+                "per_page": 100  # Параметр ограничен значением в 100 (из документации).
+                }
+
+        try:
+            result = requests.get(f'{self.API_BASE_URL}{self.VACANCIES_LIST_PATH}', params=params)
+            result.raise_for_status()
+            vacancy_page = result.json()
+            vacancy_id_list = []
+            for vacancy in vacancy_page["items"]:
+                vacancy_id_list.append(vacancy["id"])
+            return vacancy_id_list
+        except requests.RequestException as error:
+            logging.exception(error)
+            return            
+
+    def get_vacancies_lvl(self, vacancy_id):
+        """ Метод получения уровня сосискателя (Junior, Middle, Senior) для вакансии
+
+        Возвращает строку.
+        Аргументы:
+            vacancy_id - id вакансии
+
+        """
+        junior_lvl = ["junior", "джуниор", "младший"]
+        middle_lvl = ["middle", "миддл", "мидл"]
+        senior_lvl = ["senior", "сеньор", "сеньёр", "синьёр", "сениор", "сеньер", "старший"]
+        keys = ["name", "description"]
+        vacancy_lvl = "Other"
+
+        # проверяем входные данные
+        try:
+            vacancy_id = int(vacancy_id)
+        except TypeError as error:
+            logging.exception(error)
+            return
+        except ValueError as error:
+            logging.exception(error)
+            return
+
+        try:
+            result = requests.get(f'{self.API_BASE_URL}{self.VACANCIES_LIST_PATH}{vacancy_id}')
+            result.raise_for_status()
+            vacancy_page = result.json()
+            if 'errors' in vacancy_page:
+                raise ValueError('Запрос не выполнен')
+        except ValueError as error:
+            logging.exception(error)
+            return
+        except requests.RequestException as error:
+            logging.exception(error)
+            return
+
+        for key in keys:
+            for j in junior_lvl:
+                if j in vacancy_page[key].lower():
+                    vacancy_lvl = "Junior"
+            for m in middle_lvl:
+                if m in vacancy_page[key].lower():
+                    vacancy_lvl = "Middle"
+            for s in senior_lvl:
+                if s in vacancy_page[key].lower():
+                    vacancy_lvl = "Senior"
+        return vacancy_lvl
+
     def get_vacancies_detail(self, vacancy_id) -> dict:
         """
         Метод для получения нужной информации о вакансии.
