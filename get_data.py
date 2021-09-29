@@ -1,84 +1,82 @@
-import json
-
+import logging
 import requests
-from requests.models import Request
 
 
-class Headhunter:
+logging.basicConfig(format='%(levelname)s - %(message)s',
+                    filename='error.log')
+
+class HeadHunterClient:
     def __init__(self):
         pass
         
-    def GetVacancysList(self):
+    def get_vacancys_list(self):
        pass            
         
-    def GetVacancyDetail(self, vacancy_id):
+    def get_vacancy_detail(self, vacancy_id) -> dict:
         """
         Метод для получения нужной информации о вакансии\n
         Аргументы:\n
-            vacancy_id - id вакансии
+            vacancy_id - id вакансии\n
+        Возвращает словарь.
         """
         # проверяем входные данные
         try:
             vacancy_id = int(vacancy_id)
         except TypeError as error:
-            print('Неверный параметр', error)
+            logging.exception(error)
             return
         except ValueError as error:
-            print('Проверьте id', error)
+            logging.exception(error)
             return
 
+        URL = 'https://api.hh.ru/vacancies/'
+        params = {
+            'host': 'hh.ru'
+        }
+
         # делаем запрос
-        self.vacancy_id = vacancy_id
         try:
-            self.req = requests.get(f'https://api.hh.ru/vacancies/{self.vacancy_id}?host=hh.ru')
-            self.answer = json.loads(self.req.content.decode())  # декодируем и приводим к питоновскому словарю
-            self.req.raise_for_status
-            self.req.close()
-            if 'errors' in self.answer:
+            req = requests.get(URL + str(vacancy_id), params)
+            answer = req.json()  # декодируем и приводим к питоновскому словарю
+            req.raise_for_status()
+            if 'errors' in answer:
                 raise ValueError('Запрос не выполнен')
         except ValueError as error:
-            print(error)
+            logging.exception(error)
             return
-        except requests.ConnectionError as error:
-            print('Ошибка подключения', error)
+        except (requests.ConnectionError, requests.HTTPError, requests.Timeout)  as error:
+            logging.exception(error)
             return
 
         # формируем словарь 
-        self.data = {'hh_id': self.answer['id'],
-                        'name': self.answer['name'],
-                        'area_id': self.answer['area']['id'],
-                        'area_name': self.answer['area']['name'],
-                        'experience_id': self.answer['experience']['id'],
-                        'schedule_id': self.answer['schedule']['id'],
-                        'employment_id': self.answer['employment']['id'],
-                        'key_skills': self.answer['key_skills'],
-                        'employer_id': self.answer['employer']['id'],
-                        'employer_name': self.answer['employer']['name'],
-                        'employer_url': self.answer['employer']['url'],
-                        'created_at': self.answer['created_at']
-                    }
+        data = {
+            'hh_id': answer['id'],
+            'name': answer['name'],
+            'area_id': answer['area']['id'],
+            'area_name': answer['area']['name'],
+            'experience_id': answer['experience']['id'],
+            'schedule_id': answer['schedule']['id'],
+            'employment_id': answer['employment']['id'],
+            'key_skills': answer['key_skills'],
+            'employer_id': answer['employer']['id'],
+            'employer_name': answer['employer']['name'],
+            'employer_url': answer['employer']['url'],
+            'created_at': answer['created_at']
+        }
         # проверяем зарплату и дополняем словарь
-        if self.answer['salary'] is None:
-            self.data.update({'salary_from': None,
-                                'salaty_to': None,
-                                'currency': None
-                            })
-        if self.answer['salary']:
-            self.data.update({'salary_from': self.answer['salary']['to'],
-                            'salaty_to': self.answer['salary']['to'],
-                            'currency': self.answer['salary']['currency']
-                            })
+        if answer['salary'] is None:
+            data.update({
+                'salary_from': None,
+                'salaty_to': None,
+                'currency': None
+                })
+        else: data.update({
+            'salary_from': answer['salary']['to'],
+            'salaty_to': answer['salary']['to'],
+            'currency': answer['salary']['currency']
+            })
 
-        return self.data
+        return data
 
 if __name__ == '__main__':
-    hh_data = Headhunter()
-
-    vac_id = 4452998
-    print(hh_data.GetVacancyDetail(vac_id))
-    vac_id = '44528998'
-    print(hh_data.GetVacancyDetail(vac_id))
-    vac_id = '44528ff998'
-    print(hh_data.GetVacancyDetail(vac_id))
-    vac_id = '445299811122'
-    print(hh_data.GetVacancyDetail(vac_id))
+    pass
