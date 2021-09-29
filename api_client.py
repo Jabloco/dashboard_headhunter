@@ -12,14 +12,15 @@ class HeadHunterClient:
     def __init__(self):
         pass
         
-    def get_vacancys_list(self):
+    def get_vacancies_list(self):
        pass            
         
-    def get_vacancy_detail(self, vacancy_id) -> dict:
+    def get_vacancies_detail(self, vacancy_id) -> dict:
         """
-        Метод для получения нужной информации о вакансии\n
-        Аргументы:\n
-            vacancy_id - id вакансии\n
+        Метод для получения нужной информации о вакансии.
+
+        Аргументы:
+            vacancy_id - id вакансии
         Возвращает словарь.
         """
         
@@ -70,17 +71,17 @@ class HeadHunterClient:
         if answer['salary'] is None:
             data.update(
                 {
-                'salary_from': None,
-                'salary_to': None,
-                'currency': None
+                    'salary_from': None,
+                    'salary_to': None,
+                    'currency': None
                 }
             )
         else:
             data.update(
                 {
-                'salary_from': answer['salary']['to'],
-                'salary_to': answer['salary']['to'],
-                'currency': answer['salary']['currency']
+                    'salary_from': answer['salary']['to'],
+                    'salary_to': answer['salary']['to'],
+                    'currency': answer['salary']['currency']
                 }
             )
 
@@ -88,3 +89,4 @@ class HeadHunterClient:
 
 if __name__ == '__main__':
     pass
+    
