@@ -1,7 +1,7 @@
 from os import name
 from app import db
 
-keyskill = db.Table('vacancy_skill',
+vacancy_skill = db.Table('vacancy_skill',
     db.Column('vacancy_id', db.Integer, db.ForeignKey('vacancy.id'), primary_key=True),
     db.Column('keyskill_id', db.Integer, db.ForeignKey('keyskill.id'), primary_key=True)
 )
@@ -19,7 +19,7 @@ class Area(db.Model):
 class KeySkill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), unique=True, nullable=False)
-    keyskill_relation = db.relationship('Vacancy', secondary=keyskill)
+    keyskill_relation = db.relationship('Vacancy', secondary=vacancy_skill)
 
     def __repr__(self):
         return f'id: {self.id}, keyskill_name: {self.name}'
