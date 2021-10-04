@@ -75,7 +75,7 @@ class HeadHunterClient:
             for level in Levels:
                 for similiar_level in level.value:
                     if similiar_level in vacancy_page[section].lower():
-                        vacancy_level = level.name.title()
+                        vacancy_level = level.name
         return vacancy_level
 
     def get_vacancies_detail(self, vacancy_id) -> dict:
