@@ -1,6 +1,8 @@
 import logging
 import requests
 
+from constants import Levels
+
 
 logging.basicConfig(format='%(levelname)s - %(message)s',
                     filename='error.log')
@@ -12,8 +14,8 @@ class HeadHunterClient:
     def __init__(self):
         pass
 
-    def get_vacancies_list(self, vacancy_name, page, area=1) -> list:
-        """ Метод получения списка из id вакансий на странице.
+    def get_vacancies_ids(self, vacancy_name, page, area=1) -> list:
+        """Метод получения списка из id вакансий на странице.
 
         Возвращает список.
         Аргументы:
@@ -22,12 +24,12 @@ class HeadHunterClient:
             area - регион, по умолчанию = 1 (Москва)
         """
         params = {
-                "area": area,
-                "st": "searchVacancy",
-                "text": vacancy_name,
-                "page": page,
-                "per_page": 100  # Параметр ограничен значением в 100 (из документации).
-                }
+            "area": area,
+            "st": "searchVacancy",
+            "text": vacancy_name,
+            "page": page,
+            "per_page": 100  # Параметр ограничен значением в 100 (из документации).
+            }
 
         try:
             result = requests.get(f'{self.API_BASE_URL}{self.VACANCIES_LIST_PATH}', params=params)
@@ -41,18 +43,13 @@ class HeadHunterClient:
         vacancy_ids = [vacancy["id"] for vacancy in vacancy_page["items"]]
         return vacancy_ids
             
-    def get_vacancies_level(self, vacancy_id):
+    def get_vacancies_level(self, vacancy_id) -> str:
         """ Метод получения уровня сосискателя (Junior, Middle, Senior) для вакансии
 
         Возвращает строку.
         Аргументы:
             vacancy_id - id вакансии
         """
-        levels = {
-            "Junior": ["junior", "джуниор", "младший"],
-            "Middle": ["middle", "миддл", "мидл"],
-            "Senior": ["senior", "сеньор", "сеньёр", "синьёр", "сениор", "сеньер", "старший"]
-            }
         vacancy_sections = ["name", "description"]
         vacancy_level = "Other"
 
@@ -75,10 +72,10 @@ class HeadHunterClient:
         if 'errors' in vacancy_page:
             raise ValueError('Запрос не выполнен')
         for section in vacancy_sections:
-            for level, similiar_level_word  in levels.items():
-                for l in similiar_level_word:
-                    if l in vacancy_page[section].lower():
-                        vacancy_level = level
+            for level in Levels:
+                for similiar_level in level.value:
+                    if similiar_level in vacancy_page[section].lower():
+                        vacancy_level = level.name.title()
         return vacancy_level
 
     def get_vacancies_detail(self, vacancy_id) -> dict:
