@@ -13,9 +13,8 @@ class Vacancy(db.Model):
     employer_id = db.Column(db.Integer(64), db.ForeignKey("employer.id"),nullable=False) 
     created_at = db.Column(db.Date(64), nullable=False)
     level = db.Column(db.String(128), nullable=False)
-
-    area = db.relationship("Area", backref="areas")
-    employer = db.relationship("Employer", backref="employers")
+    area = db.relationship("Area", backref="vacancies")
+    employer = db.relationship("Employer", backref="vacancies")
 
     def __repr__(self):
         return f"id:{self.id}, hh_id:{self.hh_id}"
