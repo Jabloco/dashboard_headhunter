@@ -26,17 +26,17 @@ class KeySkill(db.Model):
 
 
 class Vacancy(db.Model):
-    id = db.Column(db.Integer(64), primary_key=True)
-    hh_id = db.Column(db.Integer(64), unique=True, nullable=False)
-    salary_from = db.Column(db.Integer(64))
-    salary_to = db.Column(db.Integer(64))
+    id = db.Column(db.Integer, primary_key=True)
+    hh_id = db.Column(db.Integer, unique=True, nullable=False)
+    salary_from = db.Column(db.Integer)
+    salary_to = db.Column(db.Integer)
     currency_id = db.Column(db.String(128))
     experience_id = db.Column(db.String(128))
     schedule_id = db.Column(db.String(128))
     employment_id = db.Column(db.String(128))
-    area_id = db.Column(db.Integer(64), db.ForeignKey("area.id"),nullable=False)
-    employer_id = db.Column(db.Integer(64), db.ForeignKey("employer.id"),nullable=False) 
-    created_at = db.Column(db.Date(64), nullable=False)
+    area_id = db.Column(db.Integer, db.ForeignKey("area.id"),nullable=False)
+    employer_id = db.Column(db.Integer, db.ForeignKey("employer.id"),nullable=False) 
+    created_at = db.Column(db.Date, nullable=False)
     level = db.Column(db.String(128), nullable=False)
     area = db.relationship("Area", backref="vacancies")
     employer = db.relationship("Employer", backref="vacancies")
@@ -46,8 +46,8 @@ class Vacancy(db.Model):
 
 
 class Employer(db.Model):
-    id = db.Column(db.Integer(64), primary_key=True)
-    hh_id = db.Column(db.Integer(64), unique=True)   
+    id = db.Column(db.Integer, primary_key=True)
+    hh_id = db.Column(db.Integer, unique=True)   
     name =  db.Column(db.String(128), unique=True)   
 
     def __repr__(self):
