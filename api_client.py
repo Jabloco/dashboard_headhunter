@@ -51,7 +51,7 @@ class HeadHunterClient:
             vacancy_id - id вакансии
         """
         vacancy_sections = ["name", "description"]
-        vacancy_level = "Other"
+        vacancy_level = Levels.UNDEFINED.name
 
         # проверяем входные данные
         try:
