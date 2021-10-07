@@ -8,6 +8,7 @@ vacancy_skill = db.Table('vacancy_skill',
 
 
 class Area(db.Model):
+    __tablename__ = 'area'
     id = db.Column(db.Integer, primary_key=True)
     hh_id = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(120), nullable=False)
@@ -17,6 +18,7 @@ class Area(db.Model):
 
 
 class KeySkill(db.Model):
+    __tablename__ = 'keyskill'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), unique=True, nullable=False)
     vacancies = db.relationship('Vacancy', secondary=vacancy_skill)
@@ -26,6 +28,7 @@ class KeySkill(db.Model):
 
 
 class Vacancy(db.Model):
+    __tablename__ = 'vacancy'
     id = db.Column(db.Integer, primary_key=True)
     hh_id = db.Column(db.Integer, unique=True, nullable=False)
     salary_from = db.Column(db.Integer)
@@ -34,18 +37,19 @@ class Vacancy(db.Model):
     experience_id = db.Column(db.String(128))
     schedule_id = db.Column(db.String(128))
     employment_id = db.Column(db.String(128))
-    area_id = db.Column(db.Integer, db.ForeignKey("area.id"),nullable=False)
-    employer_id = db.Column(db.Integer, db.ForeignKey("employer.id"),nullable=False) 
+    area_id = db.Column(db.Integer, db.ForeignKey('area.id'),nullable=False)
+    employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'),nullable=False) 
     created_at = db.Column(db.Date, nullable=False)
     level = db.Column(db.String(128), nullable=False)
-    area = db.relationship("Area", backref="vacancies")
-    employer = db.relationship("Employer", backref="vacancies")
+    area = db.relationship('Area', backref='vacancies')
+    employer = db.relationship('Employer', backref='vacancies')
 
     def __repr__(self):
         return f"id:{self.id}, hh_id:{self.hh_id}"
 
 
 class Employer(db.Model):
+    __tablename__ = 'employer'
     id = db.Column(db.Integer, primary_key=True)
     hh_id = db.Column(db.Integer, unique=True)   
     name =  db.Column(db.String(128), unique=True)   
