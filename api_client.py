@@ -1,6 +1,8 @@
 import logging
 import requests
+import sqlalchemy.orm.exc
 
+from flask_carcas.app import db
 from constants import Levels
 
 
@@ -149,6 +151,28 @@ class HeadHunterClient:
             )
 
         return data
+
+    def get_or_create(self, model, **kwargs):
+        """
+        Делаем запрос в БД, при наличии определенной записи,
+        возвращаем ее, при отсутствии, создаем и возвращаем.
+        """
+        try:
+            model_object = model.query.filter_by(**kwargs).first()
+        # Лишний аргумент в запросе.
+        except sqlalchemy.exc.InvalidRequestError as error:
+            logging.exception(error)
+            return None, None
+        # Один из аргументов Unique уже существует.
+        except sqlalchemy.exc.IntegrityError as error:
+            logging.exception(error)
+            return None, None
+        if model_object is not None:
+            return model_object, False
+        model_object = model(**kwargs)
+        db.session.add(model_object)
+        db.session.commit()
+        return model_object, True
 
 if __name__ == '__main__':
     pass
