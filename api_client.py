@@ -1,6 +1,8 @@
 import logging
 import requests
 
+
+from flask_carcas.app import db
 from constants import Levels
 
 
