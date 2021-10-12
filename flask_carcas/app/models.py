@@ -1,3 +1,6 @@
+import sqlalchemy.orm.exc
+import logging
+
 from os import name
 import logging
 
@@ -13,6 +16,28 @@ vacancy_skill = db.Table('vacancy_skill',
     db.Column('keyskill_id', db.Integer, db.ForeignKey('keyskill.id'), primary_key=True)
 )
 
+def get_or_create(model, **kwargs):
+    """
+    Делаем запрос в БД, при наличии определенной записи,
+    возвращаем ее, при отсутствии, создаем и возвращаем.
+    """
+    try:
+        model_object = model.query.filter_by(**kwargs).first()
+    # Лишний аргумент в запросе.
+    except sqlalchemy.exc.InvalidRequestError as error:
+        logging.exception(error)
+        return None, None
+    if model_object is not None:
+        return model_object, False
+    try:
+        model_object = model(**kwargs)
+        db.session.add(model_object)
+        db.session.commit()
+    # Один из аргументов Unique уже существует.
+    except sqlalchemy.exc.IntegrityError as error:
+        logging.exception(error)
+        return None, None
+    return model_object, True
 
 class Area(db.Model):
     __tablename__ = 'area'
