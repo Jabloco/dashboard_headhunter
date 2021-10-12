@@ -2,13 +2,11 @@ from os import name
 import logging
 
 from app import db
-import sqlalchemy.exc
-
+import sqlalchemy.orm.exc
 from api_client import HeadHunterClient
 
 logging.basicConfig(format='%(levelname)s - %(message)s',
                     filename='error.log')
-
 
 vacancy_skill = db.Table('vacancy_skill',
     db.Column('vacancy_id', db.Integer, db.ForeignKey('vacancy.id'), primary_key=True),
@@ -46,8 +44,8 @@ class Vacancy(db.Model):
     experience_id = db.Column(db.String(128))
     schedule_id = db.Column(db.String(128))
     employment_id = db.Column(db.String(128))
-    area_id = db.Column(db.Integer, db.ForeignKey('area.id'),nullable=False)
-    employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'),nullable=False) 
+    area_id = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
+    employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'), nullable=False)
     created_at = db.Column(db.Date, nullable=False)
     level = db.Column(db.String(128), nullable=False)
     area = db.relationship('Area', backref='vacancies')
@@ -60,40 +58,56 @@ class Vacancy(db.Model):
 class Employer(db.Model):
     __tablename__ = 'employer'
     id = db.Column(db.Integer, primary_key=True)
-    hh_id = db.Column(db.Integer, unique=True)   
-    name =  db.Column(db.String(128), unique=True)   
+    hh_id = db.Column(db.Integer, unique=True)
+    name = db.Column(db.String(128), unique=True)
 
     def __repr__(self):
         return f"id:{self.id}, hh_id:{self.hh_id}, employer_name:{self.name}"
 
-def get_or_create(model, **kwargs):
-    """
-    Делаем запрос в БД, при наличии определенной записи,
-    возвращаем ее, при отсутствии, создаем и возвращаем.
-    """
 
+def get_or_create():
+    pass
+
+def employer_insert(vacancy_data: dict):
+    employer = {
+        'hh_id': vacancy_data['employer_id'],
+        'name': vacancy_data['employer_name']
+    }
+    get_or_create(Employer, employer)
+    
+
+
+def keyskill_vacancy(vacancy_data: dict):
+    """
+    Функция для заполнения связующей таблицы М2М.
+    Принимает словарь с данными о вакансии.
+    Поскольку заполняется связующая таблица,
+    то имеет смысл выполнять функцию
+    после того как данные из словаря занесены
+    в соответствующие таблицы, иначе нечего будет свызывать =)
+    """
+    vacancy_hh_id = vacancy_data['hh_id']
+    key_skills = vacancy_data['key_skills']
+
+    # находим id вакансии
     try:
-        model_object = model.query.filter_by(**kwargs).first()
-    # Лишний аргумент в запросе.
+        vacancy = Vacancy.query.filter_by(hh_id=vacancy_hh_id).first()
+        vacancy_id = {'vacancy_id': vacancy.id}
     except sqlalchemy.exc.InvalidRequestError as error:
         logging.exception(error)
-        return None, None
-    # Один из аргументов Unique уже существует.
-    except sqlalchemy.exc.IntegrityError as error:
-        logging.exception(error)
-        return None, None
-    if model_object is not None:
-        return model_object, False
-    model_object = model(**kwargs)
-    db.session.add(model_object)
-    db.session.commit()
-    return model_object, True
+        return None
 
-vacancy_data = HeadHunterClient().get_vacancies_detail(48447671)
+    # проходим по списку скилов и для каждого ищем id
+    for keyskill in key_skills:
+        vacancy_skill_ids = {}
+        skill_name = keyskill['name']
+        try:
+            skill = KeySkill.query.filter_by(name=skill_name).first()
+            skill_id = {'keyskill_id': skill.id}
+        except sqlalchemy.exc.InvalidRequestError as error:
+            logging.exception(error)
+            return None
 
-area_data = {
-    'hh_id':vacancy_data('area_id'),
-    'area':vacancy_data('area_name')
-}
-
-print(get_or_create('Area', area_data))
+        if vacancy_id and skill_id:
+            vacancy_skill_ids = {**vacancy_id, **skill_id}
+            get_or_create(vacancy_skill, vacancy_skill_ids)

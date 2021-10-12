@@ -42,7 +42,7 @@ class HeadHunterClient:
             raise ValueError('Запрос не выполнен')
         vacancy_ids = [vacancy["id"] for vacancy in vacancy_page["items"]]
         return vacancy_ids
-            
+
     def get_vacancies_level(self, vacancy_id) -> str:
         """ Метод получения уровня сосискателя (Junior, Middle, Senior) для вакансии
 
@@ -86,7 +86,7 @@ class HeadHunterClient:
             vacancy_id - id вакансии
         Возвращает словарь.
         """
-        
+
         # проверяем входные данные
         try:
             vacancy_id = int(vacancy_id)
@@ -115,7 +115,7 @@ class HeadHunterClient:
             logging.exception(error)
             return
 
-        # формируем словарь 
+        # формируем словарь
         data = {
             'hh_id': answer['id'],
             'name': answer['name'],
@@ -150,6 +150,6 @@ class HeadHunterClient:
 
         return data
 
+
 if __name__ == '__main__':
     pass
-    
