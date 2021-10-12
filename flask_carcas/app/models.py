@@ -90,16 +90,12 @@ class Employer(db.Model):
         return f"id:{self.id}, hh_id:{self.hh_id}, employer_name:{self.name}"
 
 
-def get_or_create():
-    pass
-
 def employer_insert(vacancy_data: dict):
     employer = {
         'hh_id': vacancy_data['employer_id'],
         'name': vacancy_data['employer_name']
     }
-    get_or_create(Employer, employer)
-    
+    get_or_create(Employer, **employer)
 
 
 def keyskill_vacancy(vacancy_data: dict):

@@ -130,3 +130,5 @@ dmypy.json
 *.sqlite3
 .vscode/settings.json
 .vscode/
+flask_carcas/db_test.py
+

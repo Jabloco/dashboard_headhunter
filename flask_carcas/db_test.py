@@ -1,8 +1,13 @@
-from app import db
-from app.models import Area
+# from app import db
+from app.models import Employer
+from app.models import employer_insert
+from api_client import HeadHunterClient
 
-db.create_all()
+# db.create_all()
 
-a = Area(hh_id=1, name='city')
-db.session.add(a)
-db.session.commit()
+hh = HeadHunterClient()
+
+vacancy_data = hh.get_vacancies_detail(36276899)
+employer_insert(vacancy_data)
+read = Employer.query.all()
+print(read)
