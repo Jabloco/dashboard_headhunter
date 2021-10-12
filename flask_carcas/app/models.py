@@ -1,5 +1,14 @@
 from os import name
+import logging
+
 from app import db
+import sqlalchemy.exc
+
+from api_client import HeadHunterClient
+
+logging.basicConfig(format='%(levelname)s - %(message)s',
+                    filename='error.log')
+
 
 vacancy_skill = db.Table('vacancy_skill',
     db.Column('vacancy_id', db.Integer, db.ForeignKey('vacancy.id'), primary_key=True),
@@ -57,3 +66,34 @@ class Employer(db.Model):
     def __repr__(self):
         return f"id:{self.id}, hh_id:{self.hh_id}, employer_name:{self.name}"
 
+def get_or_create(model, **kwargs):
+    """
+    Делаем запрос в БД, при наличии определенной записи,
+    возвращаем ее, при отсутствии, создаем и возвращаем.
+    """
+
+    try:
+        model_object = model.query.filter_by(**kwargs).first()
+    # Лишний аргумент в запросе.
+    except sqlalchemy.exc.InvalidRequestError as error:
+        logging.exception(error)
+        return None, None
+    # Один из аргументов Unique уже существует.
+    except sqlalchemy.exc.IntegrityError as error:
+        logging.exception(error)
+        return None, None
+    if model_object is not None:
+        return model_object, False
+    model_object = model(**kwargs)
+    db.session.add(model_object)
+    db.session.commit()
+    return model_object, True
+
+vacancy_data = HeadHunterClient().get_vacancies_detail(48447671)
+
+area_data = {
+    'hh_id':vacancy_data('area_id'),
+    'area':vacancy_data('area_name')
+}
+
+print(get_or_create('Area', area_data))
