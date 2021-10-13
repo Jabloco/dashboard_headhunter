@@ -11,8 +11,8 @@ vacancy_skill = db.Table('vacancy_skill',
 
 def get_or_create(model, **kwargs):
     """
-    Делаем запрос в БД, при наличии определенной записи,
-    возвращаем ее, при отсутствии, создаем и возвращаем.
+    Делает запрос в БД, при наличии определенной записи,
+    возвращает ее, при отсутствии, создаем и возвращаем.
     """
     try:
         model_object = model.query.filter_by(**kwargs).first()
@@ -38,6 +38,11 @@ class Area(db.Model):
     hh_id = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(120), nullable=False)
 
+    def area_insert(self, vacancy_data):
+        """Записывает данные в таблицу Area."""
+        area = {"hh_id": vacancy_data['area_id'], "name": vacancy_data['area_name']}
+        get_or_create(Area, **area)
+
     def __repr__(self):
         return f'id: {self.id}, hh_id: {self.hh_id}, area_name: {self.name}'
 
@@ -47,6 +52,11 @@ class KeySkill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), unique=True, nullable=False)
     vacancies = db.relationship('Vacancy', secondary=vacancy_skill)
+
+    def key_skill_insert(self, vacancy_data):
+        """Записывает данные в таблицу KeySkill."""
+        key_skill = {"name": vacancy_data['key_skills']}
+        get_or_create(KeySkill, **key_skill)
 
     def __repr__(self):
         return f'id: {self.id}, keyskill_name: {self.name}'
@@ -69,6 +79,21 @@ class Vacancy(db.Model):
     area = db.relationship('Area', backref='vacancies')
     employer = db.relationship('Employer', backref='vacancies')
 
+    def vacancy_insert(self, vacancy_data, vacancy_level):
+        """Записывает данные в таблицу Vacancy."""
+        vacancy = {
+            "hh_id": vacancy_data["hh_id"],
+            "salary_from": vacancy_data["salary_from"],
+            "salary_to": vacancy_data["salary_to"],
+            "currency_id": vacancy_data["currency"],
+            "experience_id": vacancy_data["experience_id"],
+            "schedule_id": vacancy_data["schedule_id"],
+            "employment_id": vacancy_data["employment_id"],
+            "created_at": vacancy_data["created_at"],
+            "level": vacancy_data ["vacancy_level"]
+            }
+        get_or_create(Vacancy, **vacancy)
+
     def __repr__(self):
         return f"id:{self.id}, hh_id:{self.hh_id}"
 
@@ -81,4 +106,3 @@ class Employer(db.Model):
 
     def __repr__(self):
         return f"id:{self.id}, hh_id:{self.hh_id}, employer_name:{self.name}"
-
