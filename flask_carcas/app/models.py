@@ -86,16 +86,20 @@ class Employer(db.Model):
     hh_id = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(128), unique=True)
 
+    @classmethod
+    def insert(self):
+        employer = {
+            'hh_id': self.hh_id,
+            'name': self.name
+        }
+        get_or_create(Employer, **employer)
+
+
     def __repr__(self):
         return f"id:{self.id}, hh_id:{self.hh_id}, employer_name:{self.name}"
 
 
-def employer_insert(vacancy_data: dict):
-    employer = {
-        'hh_id': vacancy_data['employer_id'],
-        'name': vacancy_data['employer_name']
-    }
-    get_or_create(Employer, **employer)
+
 
 
 def keyskill_vacancy(vacancy_data: dict):
