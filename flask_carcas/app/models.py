@@ -84,18 +84,21 @@ class Vacancy(db.Model):
     employer = db.relationship('Employer', backref='vacancies')
 
     @classmethod
-    def insert(cls, vacancy_data):
+    def insert(cls, hh_id, salary_from, 
+                    salary_to, currency_id, 
+                    experience_id, schedule_id, 
+                    employment_id, created_at, level):
         """Записывает данные в таблицу Vacancy."""
         vacancy = {
-            "hh_id": vacancy_data["hh_id"],
-            "salary_from": vacancy_data["salary_from"],
-            "salary_to": vacancy_data["salary_to"],
-            "currency_id": vacancy_data["currency"],
-            "experience_id": vacancy_data["experience_id"],
-            "schedule_id": vacancy_data["schedule_id"],
-            "employment_id": vacancy_data["employment_id"],
-            "created_at": vacancy_data["created_at"],
-            "level": vacancy_data ["level"]
+            "hh_id": hh_id,
+            "salary_from": salary_from,
+            "salary_to": salary_to,
+            "currency_id": currency_id,
+            "experience_id": experience_id,
+            "schedule_id": schedule_id,
+            "employment_id": employment_id,
+            "created_at": created_at,
+            "level": level
             }
         model_object = get_or_create(Vacancy, **vacancy)
         return model_object
