@@ -38,7 +38,7 @@ class Area(db.Model):
     hh_id = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(120), nullable=False)
 
-    def area_insert(self, vacancy_data):
+    def insert(self, vacancy_data):
         """Записывает данные в таблицу Area."""
         area = {"hh_id": vacancy_data['area_id'], "name": vacancy_data['area_name']}
         get_or_create(Area, **area)
@@ -53,7 +53,7 @@ class KeySkill(db.Model):
     name = db.Column(db.String(128), unique=True, nullable=False)
     vacancies = db.relationship('Vacancy', secondary=vacancy_skill)
 
-    def key_skill_insert(self, vacancy_data):
+    def insert(self, vacancy_data):
         """Записывает данные в таблицу KeySkill."""
         key_skill = {"name": vacancy_data['key_skills']}
         get_or_create(KeySkill, **key_skill)
@@ -79,10 +79,11 @@ class Vacancy(db.Model):
     area = db.relationship('Area', backref='vacancies')
     employer = db.relationship('Employer', backref='vacancies')
 
-    def vacancy_insert(self, vacancy_data, vacancy_level):
+    @classmethod
+    def insert(cls):
         """Записывает данные в таблицу Vacancy."""
         vacancy = {
-            "hh_id": vacancy_data["hh_id"],
+            "hh_id": cls.id["hh_id"],
             "salary_from": vacancy_data["salary_from"],
             "salary_to": vacancy_data["salary_to"],
             "currency_id": vacancy_data["currency"],
@@ -92,7 +93,8 @@ class Vacancy(db.Model):
             "created_at": vacancy_data["created_at"],
             "level": vacancy_data ["vacancy_level"]
             }
-        get_or_create(Vacancy, **vacancy)
+        model_object = get_or_create(Vacancy, **vacancy)
+        return model_object
 
     def __repr__(self):
         return f"id:{self.id}, hh_id:{self.hh_id}"

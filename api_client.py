@@ -112,7 +112,7 @@ class HeadHunterClient:
             'employer_name': answer['employer']['name'],
             'employer_url': answer['employer']['url'],
             'created_at': answer['created_at'],
-            'vacancy_level': vacancy_level
+            'level': vacancy_level
         }
         # проверяем зарплату и дополняем словарь
         if answer['salary'] is None:
