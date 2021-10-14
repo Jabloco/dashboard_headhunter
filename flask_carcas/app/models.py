@@ -38,10 +38,12 @@ class Area(db.Model):
     hh_id = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(120), nullable=False)
 
-    def insert(self, vacancy_data):
+    @classmethod
+    def insert(cls, area_id, area_name):
         """Записывает данные в таблицу Area."""
-        area = {"hh_id": vacancy_data['area_id'], "name": vacancy_data['area_name']}
-        get_or_create(Area, **area)
+        area = {"hh_id": area_id, "name": area_name}
+        model_object = get_or_create(Area, **area)
+        return model_object
 
     def __repr__(self):
         return f'id: {self.id}, hh_id: {self.hh_id}, area_name: {self.name}'
@@ -53,10 +55,12 @@ class KeySkill(db.Model):
     name = db.Column(db.String(128), unique=True, nullable=False)
     vacancies = db.relationship('Vacancy', secondary=vacancy_skill)
 
-    def insert(self, vacancy_data):
+    @classmethod
+    def insert(cls, key_skills):
         """Записывает данные в таблицу KeySkill."""
-        key_skill = {"name": vacancy_data['key_skills']}
-        get_or_create(KeySkill, **key_skill)
+        key_skills = {"name": key_skills}
+        model_object = get_or_create(KeySkill, **key_skills)
+        return model_object
 
     def __repr__(self):
         return f'id: {self.id}, keyskill_name: {self.name}'
@@ -80,10 +84,10 @@ class Vacancy(db.Model):
     employer = db.relationship('Employer', backref='vacancies')
 
     @classmethod
-    def insert(cls):
+    def insert(cls, vacancy_data):
         """Записывает данные в таблицу Vacancy."""
         vacancy = {
-            "hh_id": cls.id["hh_id"],
+            "hh_id": vacancy_data["hh_id"],
             "salary_from": vacancy_data["salary_from"],
             "salary_to": vacancy_data["salary_to"],
             "currency_id": vacancy_data["currency"],
@@ -91,7 +95,7 @@ class Vacancy(db.Model):
             "schedule_id": vacancy_data["schedule_id"],
             "employment_id": vacancy_data["employment_id"],
             "created_at": vacancy_data["created_at"],
-            "level": vacancy_data ["vacancy_level"]
+            "level": vacancy_data ["level"]
             }
         model_object = get_or_create(Vacancy, **vacancy)
         return model_object
