@@ -1,5 +1,6 @@
-from pathlib import Path
 import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
 
 def pie_chart(levels_count: dict):
     """
@@ -8,23 +9,31 @@ def pie_chart(levels_count: dict):
     labels = 'junior', 'middle', 'senior'
     sizes = [levels_count['junior'], levels_count['middle'], levels_count['senior']]
 
-    dir_path = Path.cwd()
-    path = Path(dir_path, 'charts', 'pie_chart.png')
-
-    fig1, ax1 = plt.subplots()
-    ax1.pie(
+    fig, ax = plt.subplots()
+    ax.pie(
         sizes, labels=labels, 
         autopct=lambda p: '{:.0f}'.format(p * sum(sizes) / 100),
         shadow=True,
         startangle=90
     )
-    # ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    # os.chmod(fname, 0o400)
-    print(path)
-    return(plt.savefig(path, format='png'))
-    
-    return(plt.show())
+   
+    return fig
+
+
+def dash_link(create_dashboard):
+    """
+    Создает ссылку на изображение для вставки в шаблон html.
+    Аргументы:
+        create_dashboard - функция создания диаграммы.
+    """
+    fig = create_dashboard()
+    # Save it to a temporary buffer.
+    buf = BytesIO()
+    fig.savefig(buf, format="png")
+    # Embed the result in the html output.
+    data = base64.b64encode(buf.getbuffer()).decode("ascii")
+    return f'data:image/png;base64,{data}'
 
 if __name__ == '__main__':
     level = {'junior': 12, 'middle': 5, 'senior': 3}
-    pie_chart(level)
+    print(pie_chart(level))
