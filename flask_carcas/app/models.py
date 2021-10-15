@@ -86,13 +86,15 @@ class Employer(db.Model):
     hh_id = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(128), unique=True)
 
+
     @classmethod
-    def insert(self):
+    def insert(cls, hh_id, name):
         employer = {
-            'hh_id': self.hh_id,
-            'name': self.name
+            'hh_id': hh_id,
+            'name': name
         }
-        get_or_create(Employer, **employer)
+        row = get_or_create(Employer, **employer)
+        return row
 
 
     def __repr__(self):
