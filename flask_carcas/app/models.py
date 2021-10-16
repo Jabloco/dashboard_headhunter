@@ -41,8 +41,7 @@ class Area(db.Model):
     @classmethod
     def insert(cls, area_id, area_name):
         """Записывает данные в таблицу Area."""
-        area = {"hh_id": area_id, "name": area_name}
-        model_object = get_or_create(Area, **area)
+        model_object = get_or_create(cls, hh_id=area_id, name=area_name)[0]
         return model_object
 
     def __repr__(self):
@@ -56,17 +55,16 @@ class KeySkill(db.Model):
     vacancies = db.relationship('Vacancy', secondary=vacancy_skill)
 
     @classmethod
-    def insert(cls, key_skills):
+    def insert(cls, key_skill):
         """Записывает данные в таблицу KeySkill."""
-        key_skills = {"name": key_skills}
-        model_object = get_or_create(KeySkill, **key_skills)
+        model_object = get_or_create(cls, name=key_skill)[0]
         return model_object
 
     def __repr__(self):
         return f'id: {self.id}, keyskill_name: {self.name}'
 
 
-class Vacancy(db.Model):
+class Vacancy(db.Model): 
     __tablename__ = 'vacancy'
     id = db.Column(db.Integer, primary_key=True)
     hh_id = db.Column(db.Integer, unique=True, nullable=False)
@@ -89,18 +87,18 @@ class Vacancy(db.Model):
                     experience_id, schedule_id, 
                     employment_id, created_at, level):
         """Записывает данные в таблицу Vacancy."""
-        vacancy = {
-            "hh_id": hh_id,
-            "salary_from": salary_from,
-            "salary_to": salary_to,
-            "currency_id": currency_id,
-            "experience_id": experience_id,
-            "schedule_id": schedule_id,
-            "employment_id": employment_id,
-            "created_at": created_at,
-            "level": level
-            }
-        model_object = get_or_create(Vacancy, **vacancy)
+        model_object = get_or_create(
+            cls,
+            hh_id=hh_id,
+            salary_from=salary_from,
+            salary_to=salary_to,
+            currency_id=currency_id,
+            experience_id=experience_id,
+            schedule_id=schedule_id,
+            employment_id=employment_id,
+            created_at=created_at,
+            level=level
+            )[0]
         return model_object
 
     def __repr__(self):
