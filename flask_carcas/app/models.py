@@ -1,13 +1,19 @@
-import sqlalchemy.orm.exc
 import logging
-
 from os import name
+
+import sqlalchemy.orm.exc
+
 from app import db
+
+
+logging.basicConfig(format='%(levelname)s - %(message)s',
+                    filename='error.log')
 
 vacancy_skill = db.Table('vacancy_skill',
     db.Column('vacancy_id', db.Integer, db.ForeignKey('vacancy.id'), primary_key=True),
     db.Column('keyskill_id', db.Integer, db.ForeignKey('keyskill.id'), primary_key=True)
 )
+
 
 def get_or_create(model, **kwargs):
     """
@@ -31,6 +37,7 @@ def get_or_create(model, **kwargs):
         logging.exception(error)
         return None, None
     return model_object, True
+
 
 class Area(db.Model):
     __tablename__ = 'area'
@@ -62,8 +69,8 @@ class Vacancy(db.Model):
     experience_id = db.Column(db.String(128))
     schedule_id = db.Column(db.String(128))
     employment_id = db.Column(db.String(128))
-    area_id = db.Column(db.Integer, db.ForeignKey('area.id'),nullable=False)
-    employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'),nullable=False) 
+    area_id = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
+    employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'), nullable=False)
     created_at = db.Column(db.Date, nullable=False)
     level = db.Column(db.String(128), nullable=False)
     area = db.relationship('Area', backref='vacancies')
@@ -76,9 +83,21 @@ class Vacancy(db.Model):
 class Employer(db.Model):
     __tablename__ = 'employer'
     id = db.Column(db.Integer, primary_key=True)
-    hh_id = db.Column(db.Integer, unique=True)   
-    name =  db.Column(db.String(128), unique=True)   
+    hh_id = db.Column(db.Integer, unique=True)
+    name = db.Column(db.String(128), unique=True)
+
+    @classmethod
+    def insert(cls, hh_id, name):
+        row, _ = get_or_create(cls, hh_id=hh_id, name=name)
+        return row
 
     def __repr__(self):
         return f"id:{self.id}, hh_id:{self.hh_id}, employer_name:{self.name}"
 
+
+def keyskill_vacancy(vacancy, keyskills):
+    skills = [KeySkill.insert(skill) for skill in keyskills]
+    vacancy.keyskill = skills
+
+    db.session.add(vacancy)
+    db.session.commit()
