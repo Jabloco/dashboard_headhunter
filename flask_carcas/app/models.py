@@ -83,16 +83,16 @@ class Vacancy(db.Model):
 
     @classmethod
     def insert(
-            cls,
-            hh_id,
-            salary_from, 
-            salary_to,
-            currency_id, 
-            experience_id,
-            schedule_id, 
-            employment_id,
-            created_at, level
-            ):
+        cls,
+        hh_id,
+        salary_from, 
+        salary_to,
+        currency_id, 
+        experience_id,
+        schedule_id, 
+        employment_id,
+        created_at, 
+        level):
         """Записывает данные в таблицу Vacancy."""
         model_object, model_exist = get_or_create(
             cls,
@@ -104,8 +104,7 @@ class Vacancy(db.Model):
             schedule_id=schedule_id,
             employment_id=employment_id,
             created_at=created_at,
-            level=level
-            )
+            level=level)
         return model_object
 
     def __repr__(self):
