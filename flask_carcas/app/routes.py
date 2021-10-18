@@ -24,8 +24,9 @@ def salary():
 @app.route("/vacancies", methods=["GET"])
 def vacancies():
     """При вводе даты передает значения в переменные date_from, date_to."""
+    page_text = "Количество вакансий по уровням"
     image = dash_link(create_pie_dashboard)
     date_from = request.args.get("date_from")
     date_to  = request.args.get("date_to")
     flash(f"Выбранная дата: c {date_from} до {date_to}.")
-    return render_template("vacancies.html", image=image)
+    return render_template("vacancies.html",title="Количество вакансий по уровням", page_text=page_text, image=image)
