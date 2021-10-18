@@ -87,8 +87,8 @@ class Employer(db.Model):
     name = db.Column(db.String(128), unique=True)
 
     @classmethod
-    def insert(cls, employer_hh_id, employer_name):
-        row, _ = get_or_create(cls, hh_id=employer_hh_id, name=employer_name)
+    def insert(cls, hh_id, name):
+        row, _ = get_or_create(cls, hh_id=hh_id, name=name)
         return row
 
     def __repr__(self):
@@ -96,10 +96,8 @@ class Employer(db.Model):
 
 
 def keyskill_vacancy(vacancy, keyskills):
-    skills = []
-    for skill in keyskills:
-        skills.append(KeySkill.insert(skill))
-
+    skills = [KeySkill.insert(skill) for skill in keyskills]
     vacancy.keyskill = skills
+
     db.session.add(vacancy)
     db.session.commit()
