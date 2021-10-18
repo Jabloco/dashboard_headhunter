@@ -41,7 +41,7 @@ class Area(db.Model):
     @classmethod
     def insert(cls, area_id, area_name):
         """Записывает данные в таблицу Area."""
-        model_object = get_or_create(cls, hh_id=area_id, name=area_name)[0]
+        model_object, model_exist = get_or_create(cls, hh_id=area_id, name=area_name)
         return model_object
 
     def __repr__(self):
@@ -57,7 +57,7 @@ class KeySkill(db.Model):
     @classmethod
     def insert(cls, key_skill):
         """Записывает данные в таблицу KeySkill."""
-        model_object = get_or_create(cls, name=key_skill)[0]
+        model_object, model_exist = get_or_create(cls, name=key_skill)
         return model_object
 
     def __repr__(self):
@@ -82,12 +82,19 @@ class Vacancy(db.Model):
     employer = db.relationship('Employer', backref='vacancies')
 
     @classmethod
-    def insert(cls, hh_id, salary_from, 
-                    salary_to, currency_id, 
-                    experience_id, schedule_id, 
-                    employment_id, created_at, level):
+    def insert(
+            cls,
+            hh_id,
+            salary_from, 
+            salary_to,
+            currency_id, 
+            experience_id,
+            schedule_id, 
+            employment_id,
+            created_at, level
+            ):
         """Записывает данные в таблицу Vacancy."""
-        model_object = get_or_create(
+        model_object, model_exist = get_or_create(
             cls,
             hh_id=hh_id,
             salary_from=salary_from,
@@ -98,7 +105,7 @@ class Vacancy(db.Model):
             employment_id=employment_id,
             created_at=created_at,
             level=level
-            )[0]
+            )
         return model_object
 
     def __repr__(self):
