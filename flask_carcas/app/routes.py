@@ -11,14 +11,13 @@ def index():
     page_text = "Привет!"
     return render_template("index.html", title="Home", page_text=page_text)
 
-@app.route("/pie_dash", methods=["GET", "POST"])
+@app.route("/pie_dash", methods=["GET"])
 def dash():
     """При вводе даты передает значения в переменные date_from, date_to."""
     image = dash_link(create_pie_dashboard)
-    if request.method == "POST":
-        date_from = request.form["date_from"]
-        date_to  = request.form["date_to"]
-        flash(f"Выбранная дата: c {date_from} до {date_to}.")
+    date_from = request.args.get("date_from")
+    date_to  = request.args.get("date_to")
+    flash(f"Выбранная дата: c {date_from} до {date_to}.")
     return render_template("pie_dash.html", image=image)
 
 @app.route("/vacancy", methods=["GET", "POST"])
