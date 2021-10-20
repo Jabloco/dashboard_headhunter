@@ -2,7 +2,7 @@ import logging
 import requests
 
 
-from flask_carcas.app import db
+from app import db
 from constants import Levels
 
 
@@ -41,7 +41,7 @@ class HeadHunterClient:
             raise ValueError('Запрос не выполнен')
         vacancy_ids = [vacancy["id"] for vacancy in vacancy_page["items"]]
         return vacancy_ids
-            
+
     def get_vacancy_level(self, vacancy_page: dict) -> str:
         """ Метод получения уровня сосискателя (Junior, Middle, Senior) для вакансии
 
@@ -67,7 +67,7 @@ class HeadHunterClient:
             vacancy_id - id вакансии
         Возвращает словарь.
         """
-        
+
         # проверяем входные данные
         try:
             vacancy_id = int(vacancy_id)
@@ -98,7 +98,7 @@ class HeadHunterClient:
 
         vacancy_level = self.get_vacancy_level(answer)
 
-        # формируем словарь 
+        # формируем словарь
         data = {
             'hh_id': answer['id'],
             'name': answer['name'],
@@ -133,3 +133,6 @@ class HeadHunterClient:
             )
 
         return data
+
+if __name__ == '__main__':
+    pass
