@@ -1,4 +1,4 @@
-from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 
@@ -18,9 +18,20 @@ def dash_link(create_dashboard):
     data = base64.b64encode(buf.getbuffer()).decode("ascii")
     return f'data:image/png;base64,{data}'
 
-def create_pie_dashboard():
-    """Создает диаграмму."""
-    fig = Figure()
-    ax = fig.subplots()
-    ax.pie([50, 30, 20])
-    return fig
+def pie_dashboard(levels_count: dict):
+    """
+    Функция принимает словарь вида {'junior': count, 'middle': count, 'senior': count}
+    """
+    labels = 'junior', 'middle', 'senior'
+    sizes = [levels_count[label] for label in labels]
+
+    figure, ax = plt.subplots()
+    ax.pie(
+        sizes,
+        labels=labels,
+        autopct=lambda p: '{:.0f}'.format(p * sum(sizes) / 100),  # счетчик вместо процентов
+        shadow=True,
+        startangle=90
+    )
+
+    return figure
