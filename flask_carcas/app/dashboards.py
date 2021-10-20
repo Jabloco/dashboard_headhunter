@@ -6,7 +6,7 @@ def pie_dashboard(levels_count: dict):
     Функция принимает словарь вида {'junior': count, 'middle': count, 'senior': count}
     """
     labels = 'junior', 'middle', 'senior'
-    sizes = [levels_count['junior'], levels_count['middle'], levels_count['senior']]
+    sizes = [levels_count[label] for label in labels]
 
     figure, ax = plt.subplots()
     ax.pie(
