@@ -7,6 +7,8 @@ from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
+from app.models import Area, KeySkill, Vacancy, Employer
 migrate = Migrate(app, db)
 
 from app import routes
+
