@@ -118,7 +118,8 @@ class Vacancy(db.Model):
             schedule_id=schedule_id,
             employment_id=employment_id,
             created_at=created_at,
-            level=level)
+            level=level
+            )
         return model_object
 
     def __repr__(self):

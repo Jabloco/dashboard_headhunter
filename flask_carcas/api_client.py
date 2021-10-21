@@ -2,16 +2,39 @@ import logging
 import requests
 
 
-from app import db
+# from app import db
 from constants import Levels
 
 
 logging.basicConfig(format='%(levelname)s - %(message)s',
                     filename='error.log')
 
+
 class HeadHunterClient:
     API_BASE_URL = 'https://api.hh.ru/'
     VACANCIES_LIST_PATH = 'vacancies/'
+    AREAS_LIST_PATH = 'areas'
+
+    def get_areas_ids(self) -> list:
+        """
+        Метод для получения списка id регионов.
+        Используется для декомпозиции результатов поиска
+        и обхода ограничений в 2000 вакансий
+        """
+        try:
+            req = requests.get(f'{self.API_BASE_URL}{self.AREAS_LIST_PATH}')
+            answer = req.json()  # декодируем и приводим к питоновскому словарю
+            req.raise_for_status()
+            if 'errors' in answer:
+                raise ValueError('Запрос не выполнен')
+        except ValueError as error:
+            logging.exception(error)
+            return
+        except requests.RequestException as error:
+            logging.exception(error)
+            return
+        areas_ids = [area['id'] for area in answer[0]['areas']]
+        return areas_ids
 
     def get_vacancies_ids(self, vacancy_name, page, area=1) -> list:
         """Метод получения списка из id вакансий на странице.
@@ -40,7 +63,8 @@ class HeadHunterClient:
         if 'errors' in vacancy_page:
             raise ValueError('Запрос не выполнен')
         vacancy_ids = [vacancy["id"] for vacancy in vacancy_page["items"]]
-        return vacancy_ids
+        page_count = vacancy_page['pages']
+        return vacancy_ids, page_count
 
     def get_vacancy_level(self, vacancy_page: dict) -> str:
         """ Метод получения уровня сосискателя (Junior, Middle, Senior) для вакансии
