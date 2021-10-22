@@ -26,8 +26,9 @@ def get_or_create(model, **kwargs):
     except sqlalchemy.exc.InvalidRequestError as error:
         logging.exception(error)
         return None, None
-    if model_object is not None:
+    if model_object:
         return model_object, False
+        
     try:
         model_object = model(**kwargs)
         db.session.add(model_object)
@@ -41,7 +42,7 @@ def get_or_create(model, **kwargs):
 def keyskill_vacancy(vacancy, keyskills):
     skills = [KeySkill.insert(skill) for skill in keyskills]
     vacancy.keyskill = skills
-
+    
     db.session.add(vacancy)
     db.session.commit()
 
@@ -90,7 +91,7 @@ class Vacancy(db.Model):
     employment_id = db.Column(db.String(128))
     area_id = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
     employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'), nullable=False)
-    created_at = db.Column(db.Date, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False)
     level = db.Column(db.String(128), nullable=False)
     area = db.relationship('Area', backref='vacancies')
     employer = db.relationship('Employer', backref='vacancies')
@@ -99,16 +100,19 @@ class Vacancy(db.Model):
     def insert(
         cls,
         hh_id,
-        salary_from, 
+        salary_from,
         salary_to,
-        currency_id, 
+        currency_id,
         experience_id,
-        schedule_id, 
+        schedule_id,
         employment_id,
-        created_at, 
-        level):
+        area_id,
+        employer_id,
+        created_at,
+        level
+        ):
         """Записывает данные в таблицу Vacancy."""
-        model_object, model_exist = get_or_create(
+        model_object, _ = get_or_create(
             cls,
             hh_id=hh_id,
             salary_from=salary_from,
@@ -117,6 +121,8 @@ class Vacancy(db.Model):
             experience_id=experience_id,
             schedule_id=schedule_id,
             employment_id=employment_id,
+            area_id=area_id,
+            employer_id=employer_id,
             created_at=created_at,
             level=level
             )
@@ -138,4 +144,4 @@ class Employer(db.Model):
         return row
 
     def __repr__(self):
-        return f"id:{self.id}, hh_id:{self.hh_id}, employer_name:{self.name}"
+        return f"id: {self.id}, hh_id: {self.hh_id}, employer_name: {self.name}"
