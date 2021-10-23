@@ -2,7 +2,6 @@ import logging
 import requests
 import time
 
-# from app import db
 from constants import Levels
 
 
@@ -135,12 +134,31 @@ class HeadHunterClient:
             'schedule_id': answer['schedule']['id'],
             'employment_id': answer['employment']['id'],
             'key_skills': answer['key_skills'],
-            'employer_id': answer['employer']['id'],
-            'employer_name': answer['employer']['name'],
-            'employer_url': answer['employer']['url'],
             'created_at': answer['created_at'],
             'level': vacancy_level
         }
+
+        """
+        возможна ситуация, что у работодателя не указан id.
+        За пишем для него id и name как None.
+        В db_worker обработаем эти значения что бы такой работодатель
+        не писался в базу
+        """
+        if 'id' not in answer['employer']:
+            data.update(
+                {
+                    'employer_id': None,
+                    'employer_name': None
+                }
+            )
+        else:
+            data.update(
+                {
+                    'employer_id': answer['employer']['id'],
+                    'employer_name': answer['employer']['name']
+                }
+            )
+
         # проверяем зарплату и дополняем словарь
         if answer['salary'] is None:
             data.update(

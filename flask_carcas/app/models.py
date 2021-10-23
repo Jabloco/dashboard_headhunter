@@ -28,7 +28,7 @@ def get_or_create(model, **kwargs):
         return None, None
     if model_object:
         return model_object, False
-        
+
     try:
         model_object = model(**kwargs)
         db.session.add(model_object)
@@ -39,11 +39,17 @@ def get_or_create(model, **kwargs):
         return None, None
     return model_object, True
 
+
 def keyskill_vacancy(vacancy, keyskills):
     skills = [KeySkill.insert(skill) for skill in keyskills]
-    vacancy.keyskill = skills
-    db.session.add(vacancy)
-    db.session.commit()
+    for skill in skills:
+        vacancy.keyskill.append(skill)
+        db.session.add(vacancy)
+    try:
+        db.session.commit()
+    except sqlalchemy.exc.IntegrityError as error:
+        logging.exception(error)
+        return
 
 
 class Area(db.Model):
@@ -66,7 +72,7 @@ class KeySkill(db.Model):
     __tablename__ = 'keyskill'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), unique=True, nullable=False)
-    vacancies = db.relationship('Vacancy', secondary=vacancy_skill)
+    # vacancies = db.relationship('Vacancy', secondary=vacancy_skill)
 
     @classmethod
     def insert(cls, key_skill):
@@ -78,7 +84,7 @@ class KeySkill(db.Model):
         return f'id: {self.id}, keyskill_name: {self.name}'
 
 
-class Vacancy(db.Model): 
+class Vacancy(db.Model):
     __tablename__ = 'vacancy'
     id = db.Column(db.Integer, primary_key=True)
     hh_id = db.Column(db.Integer, unique=True, nullable=False)
@@ -94,6 +100,7 @@ class Vacancy(db.Model):
     level = db.Column(db.String(128), nullable=False)
     area = db.relationship('Area', backref='vacancies')
     employer = db.relationship('Employer', backref='vacancies')
+    keyskill = db.relationship('KeySkill', secondary=vacancy_skill)
 
     @classmethod
     def insert(
