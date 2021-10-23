@@ -6,8 +6,8 @@ import sqlalchemy.orm.exc
 from app import db
 
 
-logging.basicConfig(format='%(levelname)s - %(message)s',
-                    filename='error.log')
+logging.basicConfig(handlers=[logging.FileHandler('error.log', 'a', 'utf-8')],
+                    format='%(levelname)s - %(message)s')
 
 vacancy_skill = db.Table('vacancy_skill',
     db.Column('vacancy_id', db.Integer, db.ForeignKey('vacancy.id'), primary_key=True),
@@ -42,7 +42,6 @@ def get_or_create(model, **kwargs):
 def keyskill_vacancy(vacancy, keyskills):
     skills = [KeySkill.insert(skill) for skill in keyskills]
     vacancy.keyskill = skills
-    
     db.session.add(vacancy)
     db.session.commit()
 

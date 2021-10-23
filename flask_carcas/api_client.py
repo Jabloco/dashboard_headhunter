@@ -1,13 +1,13 @@
 import logging
 import requests
-
+import time
 
 # from app import db
 from constants import Levels
 
 
-logging.basicConfig(format='%(levelname)s - %(message)s',
-                    filename='error.log')
+logging.basicConfig(handlers=[logging.FileHandler('error.log', 'a', 'utf-8')],
+                    format='%(levelname)s - %(message)s')
 
 
 class HeadHunterClient:
@@ -21,6 +21,7 @@ class HeadHunterClient:
         Используется для декомпозиции результатов поиска
         и обхода ограничений в 2000 вакансий
         """
+        time.sleep(0.15)
         try:
             req = requests.get(f'{self.API_BASE_URL}{self.AREAS_LIST_PATH}')
             answer = req.json()  # декодируем и приводим к питоновскому словарю
@@ -53,6 +54,7 @@ class HeadHunterClient:
             "per_page": 100  # Параметр ограничен значением в 100 (из документации).
             }
 
+        time.sleep(0.15)
         try:
             result = requests.get(f'{self.API_BASE_URL}{self.VACANCIES_LIST_PATH}', params=params)
         except requests.RequestException as error:
@@ -73,6 +75,7 @@ class HeadHunterClient:
         Аргументы:
             vacancy_page - словарь с данными вакансии.
         """
+        time.sleep(0.15)
         vacancy_sections = ["name", "description"]
         vacancy_level = Levels.UNDEFINED.name
 
@@ -91,7 +94,7 @@ class HeadHunterClient:
             vacancy_id - id вакансии
         Возвращает словарь.
         """
-
+        time.sleep(0.15)  # задержка для обхода ограничения 10 req/sec/ip
         # проверяем входные данные
         try:
             vacancy_id = int(vacancy_id)
