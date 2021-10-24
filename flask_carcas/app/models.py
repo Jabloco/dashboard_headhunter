@@ -95,7 +95,7 @@ class Vacancy(db.Model):
     employment_id = db.Column(db.String(128))
     area_id = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
     employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False)
+    created_at = db.Column(db.Date, nullable=False)
     level = db.Column(db.String(128), nullable=False)
     area = db.relationship('Area', backref='vacancies')
     employer = db.relationship('Employer', backref='vacancies')
