@@ -10,7 +10,7 @@ def dash_link(create_dashboard):
     Аргументы:
         create_dashboard - функция создания диаграммы.
     """
-    fig = create_dashboard()
+    fig = create_dashboard
     # Save it to a temporary buffer.
     buf = BytesIO()
     fig.savefig(buf, format="png")
@@ -18,12 +18,12 @@ def dash_link(create_dashboard):
     data = base64.b64encode(buf.getbuffer()).decode("ascii")
     return f'data:image/png;base64,{data}'
 
-def pie_dashboard(levels_count: dict):
+def create_pie_dashboard(levels_count: dict):
     """
     Функция принимает словарь вида {'junior': count, 'middle': count, 'senior': count}
     """
     labels = 'junior', 'middle', 'senior'
-    sizes = [levels_count[label] for label in labels]
+    sizes = [levels_count[label.upper()] for label in labels]
 
     figure, ax = plt.subplots()
     ax.pie(

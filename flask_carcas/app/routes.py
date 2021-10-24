@@ -2,6 +2,7 @@ from flask.helpers import url_for
 from flask import render_template, flash, redirect, request
 
 from app import app
+from app.models import Vacancy
 from app.forms import LoginForm
 from app.dashboards import create_pie_dashboard, dash_link
 
@@ -25,9 +26,15 @@ def salary():
 def vacancies():
     """При вводе даты передает значения в переменные date_from, date_to."""
     page_text = "Количество вакансий по уровням"
-    image = dash_link(create_pie_dashboard)
+
+    levels = ['JUNIOR', 'MIDDLE', 'SENIOR', 'UNDEFINED']
+    levels_counts = {level_name: Vacancy.query.filter_by(level = level_name).count() for level_name in levels}
+
+    image = dash_link(create_pie_dashboard(levels_counts))
+    
     date_from = request.args.get("date_from")
     date_to  = request.args.get("date_to")
+    
     flash(f"Выбранная дата: c {date_from} до {date_to}.")
     return render_template("vacancies.html",title="Количество вакансий по уровням", page_text=page_text, image=image)
 
