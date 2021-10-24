@@ -20,7 +20,7 @@ class HeadHunterClient:
         Используется для декомпозиции результатов поиска
         и обхода ограничений в 2000 вакансий
         """
-        time.sleep(0.15)
+        time.sleep(0.2)
         try:
             req = requests.get(f'{self.API_BASE_URL}{self.AREAS_LIST_PATH}')
             answer = req.json()  # декодируем и приводим к питоновскому словарю
@@ -53,7 +53,7 @@ class HeadHunterClient:
             "per_page": 100  # Параметр ограничен значением в 100 (из документации).
             }
 
-        time.sleep(0.15)
+        time.sleep(0.2)
         try:
             result = requests.get(f'{self.API_BASE_URL}{self.VACANCIES_LIST_PATH}', params=params)
         except requests.RequestException as error:
@@ -74,7 +74,7 @@ class HeadHunterClient:
         Аргументы:
             vacancy_page - словарь с данными вакансии.
         """
-        time.sleep(0.15)
+        time.sleep(0.2)
         vacancy_sections = ["name", "description"]
         vacancy_level = Levels.UNDEFINED.name
 
@@ -93,7 +93,7 @@ class HeadHunterClient:
             vacancy_id - id вакансии
         Возвращает словарь.
         """
-        time.sleep(0.15)  # задержка для обхода ограничения 10 req/sec/ip
+        time.sleep(0.2)  # задержка для обхода ограничения 10 req/sec/ip
         # проверяем входные данные
         try:
             vacancy_id = int(vacancy_id)

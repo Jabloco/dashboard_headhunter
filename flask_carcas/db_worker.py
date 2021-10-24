@@ -31,6 +31,7 @@ def write_to_db(vacancies_id):
         """
         is_vacancy_add = Vacancy.query.filter_by(hh_id=id).first()
         if is_vacancy_add is None:
+            print(id)
             vacancy_detail = hh.get_vacancy_detail(id)
             area = Area.insert(vacancy_detail['area_id'], vacancy_detail['area_name'])
 
