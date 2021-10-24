@@ -141,7 +141,7 @@ class Employer(db.Model):
     __tablename__ = 'employer'
     id = db.Column(db.Integer, primary_key=True)
     hh_id = db.Column(db.Integer, unique=True)
-    name = db.Column(db.String(128), unique=True)
+    name = db.Column(db.String(128))
 
     @classmethod
     def insert(cls, hh_id, name):
