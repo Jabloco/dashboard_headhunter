@@ -8,7 +8,6 @@ class Levels(Enum):
 
 
 search_text = [
-    'python',
     'python junior',
     'python middle',
     'python senior',
