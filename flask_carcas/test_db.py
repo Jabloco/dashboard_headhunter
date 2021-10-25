@@ -1,11 +1,12 @@
 # from app import app
 from app.models import Vacancy
 
-# j = Vacancy.query.filter_by(level = 'JUNIOR').count()
+
+date_from = '2021-10-04'
+date_to = '2021-10-20'
 levels = ['JUNIOR', 'MIDDLE', 'SENIOR', 'UNDEFINED']
-# levels = ['junior', 'middle', 'senior']
 levels_counts = {level_name: Vacancy.query.filter_by(level = level_name).count() for level_name in levels}
-
-
 print(levels_counts)
-# print(j)
+
+levels_counts = {level_name: Vacancy.query.filter(Vacancy.created_at>=date_from).filter(Vacancy.created_at<=date_to).filter_by(level=level_name).count() for level_name in levels}
+print(levels_counts)

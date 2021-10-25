@@ -28,7 +28,10 @@ def vacancies():
     page_text = "Количество вакансий по уровням"
 
     levels = ['JUNIOR', 'MIDDLE', 'SENIOR', 'UNDEFINED']
-    levels_counts = {level_name: Vacancy.query.filter_by(level = level_name).count() for level_name in levels}
+    # levels_counts = {level_name: Vacancy.query.filter_by(level = level_name).count() for level_name in levels}
+    levels_counts = {
+        level_name: Vacancy.query.filter(Vacancy.created_at>=date_from).filter(Vacancy.created_at<=date_to).filter_by(level=level_name).count() for level_name in levels
+        }
 
     image = dash_link(create_pie_dashboard(levels_counts))
     
