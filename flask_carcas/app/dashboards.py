@@ -18,3 +18,9 @@ def pie_dashboard(levels_count: dict):
     )
 
     return figure
+
+def salary_dashboard():
+    """
+    Создает график по ЗП.
+    """
+    
