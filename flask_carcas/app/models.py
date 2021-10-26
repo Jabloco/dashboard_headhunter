@@ -94,7 +94,7 @@ class Vacancy(db.Model):
     schedule_id = db.Column(db.String(128))
     employment_id = db.Column(db.String(128))
     area_id = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
-    employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'), nullable=False)
+    employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'), nullable=True)
     created_at = db.Column(db.Date, nullable=False)
     level = db.Column(db.String(128), nullable=False)
     area = db.relationship('Area', backref='vacancies')
@@ -140,7 +140,7 @@ class Vacancy(db.Model):
 class Employer(db.Model):
     __tablename__ = 'employer'
     id = db.Column(db.Integer, primary_key=True)
-    hh_id = db.Column(db.Integer, unique=True)
+    hh_id = db.Column(db.Integer, unique=True, nullable=True)
     name = db.Column(db.String(128))
 
     @classmethod

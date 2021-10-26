@@ -6,6 +6,7 @@ class Levels(Enum):
     MIDDLE = ["middle", "миддл", "мидл"]
     JUNIOR = ["junior", "джуниор", "младший"]
 
+SLEEP_TIME = 0.3
 
 search_text = [
     'python junior',

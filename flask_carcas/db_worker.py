@@ -31,12 +31,12 @@ def write_to_db(vacancies_id):
         """
         is_vacancy_add = Vacancy.query.filter_by(hh_id=id).first()
         if is_vacancy_add is None:
+            print(id)
             vacancy_detail = hh.get_vacancy_detail(id)
+            print(vacancy_detail)
             area = Area.insert(vacancy_detail['area_id'], vacancy_detail['area_name'])
-
-            # проверим что у employer есть id, если есть то пишем в БД
-            if vacancy_detail['employer_id']:
-                employer = Employer.insert(vacancy_detail['employer_id'], vacancy_detail['employer_name'])
+            
+            employer = Employer.insert(vacancy_detail['employer_id'], vacancy_detail['employer_name'])
 
             vacancy_obj = Vacancy.insert(
                 int(vacancy_detail['hh_id']),
@@ -47,7 +47,7 @@ def write_to_db(vacancies_id):
                 vacancy_detail['schedule_id'],
                 vacancy_detail['employment_id'],
                 int(area.id),
-                int(employer.id),
+                employer.id,
                 datetime.strptime(vacancy_detail['created_at'], '%Y-%m-%dT%H:%M:%S%z').date(),
                 vacancy_detail['level']
             )
