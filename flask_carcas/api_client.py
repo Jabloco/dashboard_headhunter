@@ -141,8 +141,6 @@ class HeadHunterClient:
         """
         возможна ситуация, что у работодателя не указан id.
         За пишем для него id и name как None.
-        В db_worker обработаем эти значения что бы такой работодатель
-        не писался в базу
         """
         if 'id' not in answer['employer']:
             data.update(
