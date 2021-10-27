@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+
 import numpy as np
 
 from app.models import Vacancy
@@ -57,7 +58,8 @@ def dash_link(create_dashboard):
     Аргументы:
         create_dashboard - функция создания диаграммы.
     """
-    fig = create_dashboard
+    fig = create_dashboard()
+
     # Save it to a temporary buffer.
     buf = BytesIO()
     fig.savefig(buf, format="png")

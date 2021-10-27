@@ -17,8 +17,8 @@ vacancy_skill = db.Table('vacancy_skill',
 
 def get_or_create(model, **kwargs):
     """
-    Делаем запрос в БД, при наличии определенной записи,
-    возвращаем ее, при отсутствии, создаем и возвращаем.
+    Делает запрос в БД, при наличии определенной записи,
+    возвращает ее, при отсутствии, создаем и возвращаем.
     """
     try:
         model_object = model.query.filter_by(**kwargs).first()
@@ -38,12 +38,25 @@ def get_or_create(model, **kwargs):
         return None, None
     return model_object, True
 
+def keyskill_vacancy(vacancy, keyskills):
+    skills = [KeySkill.insert(skill) for skill in keyskills]
+    vacancy.keyskill = skills
+
+    db.session.add(vacancy)
+    db.session.commit()
+
 
 class Area(db.Model):
     __tablename__ = 'area'
     id = db.Column(db.Integer, primary_key=True)
     hh_id = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(120), nullable=False)
+
+    @classmethod
+    def insert(cls, area_id, area_name):
+        """Записывает данные в таблицу Area."""
+        model_object, model_exist = get_or_create(cls, hh_id=area_id, name=area_name)
+        return model_object
 
     def __repr__(self):
         return f'id: {self.id}, hh_id: {self.hh_id}, area_name: {self.name}'
@@ -55,11 +68,17 @@ class KeySkill(db.Model):
     name = db.Column(db.String(128), unique=True, nullable=False)
     vacancies = db.relationship('Vacancy', secondary=vacancy_skill)
 
+    @classmethod
+    def insert(cls, key_skill):
+        """Записывает данные в таблицу KeySkill."""
+        model_object, model_exist = get_or_create(cls, name=key_skill)
+        return model_object
+
     def __repr__(self):
         return f'id: {self.id}, keyskill_name: {self.name}'
 
 
-class Vacancy(db.Model):
+class Vacancy(db.Model): 
     __tablename__ = 'vacancy'
     id = db.Column(db.Integer, primary_key=True)
     hh_id = db.Column(db.Integer, unique=True, nullable=False)
@@ -75,6 +94,32 @@ class Vacancy(db.Model):
     level = db.Column(db.String(128), nullable=False)
     area = db.relationship('Area', backref='vacancies')
     employer = db.relationship('Employer', backref='vacancies')
+
+    @classmethod
+    def insert(
+        cls,
+        hh_id,
+        salary_from, 
+        salary_to,
+        currency_id, 
+        experience_id,
+        schedule_id, 
+        employment_id,
+        created_at, 
+        level):
+        """Записывает данные в таблицу Vacancy."""
+        model_object, model_exist = get_or_create(
+            cls,
+            hh_id=hh_id,
+            salary_from=salary_from,
+            salary_to=salary_to,
+            currency_id=currency_id,
+            experience_id=experience_id,
+            schedule_id=schedule_id,
+            employment_id=employment_id,
+            created_at=created_at,
+            level=level)
+        return model_object
 
     def __repr__(self):
         return f"id:{self.id}, hh_id:{self.hh_id}"
@@ -93,11 +138,3 @@ class Employer(db.Model):
 
     def __repr__(self):
         return f"id:{self.id}, hh_id:{self.hh_id}, employer_name:{self.name}"
-
-
-def keyskill_vacancy(vacancy, keyskills):
-    skills = [KeySkill.insert(skill) for skill in keyskills]
-    vacancy.keyskill = skills
-
-    db.session.add(vacancy)
-    db.session.commit()
