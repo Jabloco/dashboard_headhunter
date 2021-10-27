@@ -3,11 +3,15 @@ from io import BytesIO
 import base64
 
 import numpy as np
+from pycbrf import ExchangeRates
 
 from app.models import Vacancy
 
 
-def create_salary_dict(level: str):
+dollar_rate = ExchangeRates()["USD"].rate
+euro_rate = ExchangeRates()["EUR"].rate
+
+def create_salaries(level: str):
     """
     Создает словарь с ключами в виде зарплат 
     и значениями в виде количества вакансий с такой зарплатой.
@@ -17,48 +21,48 @@ def create_salary_dict(level: str):
     """
     # Делаем запрос в БД и получаем все вакансии с уровня "level".
     vacancies = Vacancy.query.filter(Vacancy.level==level).all()
-    salary_dict = {}
+    salaries = {}
     for vacancy in vacancies:
         # При отсутствии значений "salary_from" или "salary_to" берем существующее.
-        if vacancy.salary_from == None and vacancy.salary_to == None:
+        if vacancy.salary_from is None and vacancy.salary_to is None:
             continue
-        elif vacancy.salary_from == None:
+        elif vacancy.salary_from is None:
             salary = vacancy.salary_to 
-        elif vacancy.salary_to == None:
+        elif vacancy.salary_to is None:
             salary = vacancy.salary_from
         else:
             salary = (vacancy.salary_from + vacancy.salary_to) / 2
         # При значении "currency" отличного от "RUR" переводим значение в "RUR".
         if vacancy.currency_id == "USD":
-            salary *= 70
+            salary *= dollar_rate
         if vacancy.currency_id == "EUR":
-            salary *= 81
-        if salary not in salary_dict:
-            salary_dict[salary] = 1
+            salary *= euro_rate
+        if salary not in salaries:
+            salaries[salary] = 1
         else:
-            salary_dict[salary] += 1
-    return salary_dict
+            salaries[salary] += 1
+    return salaries
 
-def create_salary_list(salary_dict):
+def create_sorted_salaries(salaries: dict):
     """Создает список из количества вакансий по разным диапазонам зарплат."""
-    salary_list = [0, 0, 0]
-    for salary in salary_dict.keys():
+    sorted_salaries = [0, 0, 0]
+    for salary in salaries.keys():
         if salary <= 100000:
-            salary_list[0] += salary_dict[salary]
+            sorted_salaries[0] += salaries[salary]
         if salary > 100000 and salary < 200000:
-            salary_list[1] += salary_dict[salary]
+            sorted_salaries[1] += salaries[salary]
         else:
-            salary_list[2] += salary_dict[salary]
-    return salary_list
+            sorted_salaries[2] += salaries[salary]
+    return sorted_salaries
 
-def dash_link(create_dashboard):
+def dash_link(create_dashboard: function):
     """
     Создает ссылку на изображение для вставки в шаблон html.
 
     Аргументы:
         create_dashboard - функция создания диаграммы.
     """
-    fig = create_dashboard()
+    fig = create_dashboard
 
     # Save it to a temporary buffer.
     buf = BytesIO()
@@ -86,9 +90,9 @@ def create_pie_dashboard(levels_count: dict):
     return figure
 
 def create_salary_dashboard(
-    salary_dict_junior,
-    salary_dict_middle,
-    salary_dict_senior):
+    junior_salaries: dict,
+    middle_salaries: dict,
+    senior_salaries: dict):
     """
     Создает диаграмму зарплат по уровням.
 
@@ -96,9 +100,9 @@ def create_salary_dashboard(
         salary_dict - словарь с ключами в виде зарплат
         и значениями в виде количества вакансий с такой зарплатой.
     """
-    junior_salary = create_salary_list(salary_dict_junior)
-    middle_salary = create_salary_list(salary_dict_middle)
-    senior_salary = create_salary_list(salary_dict_senior)
+    junior_salary = create_sorted_salaries(junior_salaries)
+    middle_salary = create_sorted_salaries(middle_salaries)
+    senior_salary = create_sorted_salaries(senior_salaries)
         
     category_names = ["less than 100k", "100k - 200k", "200k and more"]
     results = {
