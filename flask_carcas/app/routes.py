@@ -1,7 +1,7 @@
-from flask import render_template, flash, redirect, request
+from flask import render_template
 
 from app import app
-from app.dashboards import create_pie_dashboard, create_salary_dashboard, create_salary_dict, dash_link
+from app.dashboards import create_salary_dashboard, create_salary_dict, dash_link
 
 @app.route("/")
 @app.route("/index")
