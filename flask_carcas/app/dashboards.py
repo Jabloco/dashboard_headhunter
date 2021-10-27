@@ -63,14 +63,18 @@ def create_salaries(level: str):
 
 def create_sorted_salaries(salaries: dict):
     """Создает список из количества вакансий по разным диапазонам зарплат."""
-    sorted_salaries = [0, 0, 0]
+    sorted_salaries = [0, 0, 0, 0, 0]
     for salary in salaries.keys():
-        if salary <= 100000:
+        if salary <= 50000:
             sorted_salaries[0] += salaries[salary]
-        if salary > 100000 and salary < 200000:
+        if salary > 50000 and salary <= 100000:
             sorted_salaries[1] += salaries[salary]
-        else:
+        if salary > 100000 and salary <= 150000:
             sorted_salaries[2] += salaries[salary]
+        if salary > 150000 and salary <= 200000:
+            sorted_salaries[3] += salaries[salary]
+        else:
+            sorted_salaries[4] += salaries[salary]
     return sorted_salaries
 
 def dash_link(create_dashboard: function):
@@ -122,7 +126,12 @@ def create_salary_dashboard(
     middle_salary = create_sorted_salaries(middle_salaries)
     senior_salary = create_sorted_salaries(senior_salaries)
         
-    category_names = ["less than 100k", "100k - 200k", "200k and more"]
+    category_names = [
+        "less than 50k",
+        "50k - 100k",
+        "100k - 150k",
+        "150k - 200k",
+        "200k and more"]
     results = {
         "Junior": junior_salary,
         "Middle": middle_salary,
