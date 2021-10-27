@@ -142,20 +142,21 @@ class HeadHunterClient:
         возможна ситуация, что у работодателя не указан id.
         За пишем для него id и name как None.
         """
-        if 'id' not in answer['employer']:
-            data.update(
-                {
-                    'employer_id': None,
-                    'employer_name': answer['employer']['name']
-                }
-            )
-        else:
+        if 'id' in answer['employer']:
             data.update(
                 {
                     'employer_id': answer['employer']['id'],
                     'employer_name': answer['employer']['name']
                 }
             )
+        else:
+            data.update(
+                {
+                    'employer_id': None,
+                    'employer_name': answer['employer']['name']
+                }
+            )
+            
 
         # проверяем зарплату и дополняем словарь
         if answer['salary'] is None:
