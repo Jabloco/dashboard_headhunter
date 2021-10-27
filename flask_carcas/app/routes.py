@@ -31,13 +31,13 @@ def get_date(get_date_from, get_date_to):
 
     Проверяем входящие данные (не пустые ли) и в зависимости от результата
     подставляем либо дефолтное значение, либо введеную дату.
-    
+
     В случае если введенная дата начала позже даты окончания
     тоже подставляем дефолтные значения
     """
     
     if get_date_from == '':
-        date_from = datetime(2021, 1, 1)
+        date_from = datetime(2021, 1, 1).date()
     else:
         date_from = datetime.strptime(get_date_from, '%Y-%m-%d').date()
 
@@ -47,7 +47,7 @@ def get_date(get_date_from, get_date_to):
         date_to = datetime.strptime(get_date_to, '%Y-%m-%d').date()
 
     if date_from > date_to:
-        date_from = datetime(2021, 1, 1)
+        date_from = datetime(2021, 1, 1).date()
         date_to = date.today()
 
     return date_from, date_to
