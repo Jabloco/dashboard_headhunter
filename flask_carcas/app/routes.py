@@ -1,8 +1,7 @@
-from flask.helpers import url_for
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, request
 
 from app import app
-from app.forms import LoginForm
+from app.dashboards import create_pie_dashboard, create_salary_dashboard, create_salary_dict, dash_link
 
 @app.route("/")
 @app.route("/index")
@@ -18,7 +17,11 @@ def keyskills():
 @app.route("/salary")
 def salary():
     page_text = "Распределение зарплат"
-    return render_template("salary.html", title="Распределение зарплат", page_text=page_text)
+    image = dash_link(create_salary_dashboard(
+        create_salary_dict("JUNIOR"),
+        create_salary_dict("MIDDLE"),
+        create_salary_dict("SENIOR")))
+    return render_template("salary.html", title="Распределение зарплат", page_text=page_text, image=image)
 
 @app.route("/vacancies")
 def vacancies():
