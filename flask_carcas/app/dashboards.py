@@ -4,12 +4,14 @@ import base64
 
 import numpy as np
 from pycbrf import ExchangeRates
+from sqlalchemy import case, and_, not_, func
 
 from app.models import Vacancy
+from app import db
 
 
-dollar_rate = ExchangeRates()["USD"].rate
-euro_rate = ExchangeRates()["EUR"].rate
+usd_rate = ExchangeRates()["USD"].rate
+eur_rate = ExchangeRates()["EUR"].rate
 
 def create_salaries(level: str):
     """
@@ -19,28 +21,44 @@ def create_salaries(level: str):
     Аргументы:
         level - уровень вакансии.
     """
-    # Делаем запрос в БД и получаем все вакансии с уровня "level".
-    vacancies = Vacancy.query.filter(Vacancy.level==level).all()
     salaries = {}
+    # Создаем case содержащий ЗП для каждой вакансии, исключая вакансии без ЗП.
+    total_salary = case(
+    [
+        (and_(Vacancy.salary_from != None, Vacancy.salary_to != None), (Vacancy.salary_from + Vacancy.salary_to) / 2),
+        (Vacancy.salary_from == None, Vacancy.salary_to),
+        (Vacancy.salary_to == None, Vacancy.salary_from),
+        (Vacancy.salary_to == None, Vacancy.salary_from),
+    ],
+    ).label("total_salary")
+
+    # Создаем case содержащий ЗП для каждой вакансии в RUR.
+    total_salary_rur = case(
+        [
+            (Vacancy.currency_id == "USD", total_salary * usd_rate),
+            (Vacancy.currency_id == "EUR", total_salary * usd_rate),
+        ],
+    ).label("total_salary_rur")
+
+    # Делаем запрос в БД и получаем данные о ЗП вакансий и о количестве повторяющихся ЗП.
+    vacancies = db.session.query(
+        Vacancy, func.count("total_salary"), total_salary_rur, total_salary
+    ).filter(
+        Vacancy.level == level
+    ).filter(
+        not_(
+            and_(
+                Vacancy.salary_from == None, 
+                Vacancy.salary_to == None
+            )
+        )
+    ).group_by("total_salary").all()
+
     for vacancy in vacancies:
-        # При отсутствии значений "salary_from" или "salary_to" берем существующее.
-        if vacancy.salary_from is None and vacancy.salary_to is None:
-            continue
-        elif vacancy.salary_from is None:
-            salary = vacancy.salary_to 
-        elif vacancy.salary_to is None:
-            salary = vacancy.salary_from
+        if vacancy.total_salary_rur is not None:
+            salaries[vacancy.total_salary_rur] = vacancy[1]
         else:
-            salary = (vacancy.salary_from + vacancy.salary_to) / 2
-        # При значении "currency" отличного от "RUR" переводим значение в "RUR".
-        if vacancy.currency_id == "USD":
-            salary *= dollar_rate
-        if vacancy.currency_id == "EUR":
-            salary *= euro_rate
-        if salary not in salaries:
-            salaries[salary] = 1
-        else:
-            salaries[salary] += 1
+            salaries[vacancy.total_salary] = vacancy[1]
     return salaries
 
 def create_sorted_salaries(salaries: dict):
