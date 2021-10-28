@@ -73,11 +73,11 @@ def create_sorted_salaries(salaries: dict):
             sorted_salaries[2] += salaries[salary]
         if salary > 150000 and salary <= 200000:
             sorted_salaries[3] += salaries[salary]
-        else:
+        if salary > 200000:
             sorted_salaries[4] += salaries[salary]
     return sorted_salaries
 
-def dash_link(create_dashboard: function):
+def dash_link(create_dashboard):
     """
     Создает ссылку на изображение для вставки в шаблон html.
 

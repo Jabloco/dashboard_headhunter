@@ -2,7 +2,7 @@ from flask import render_template, flash, request
 
 from app import app
 from app.dashboards import create_pie_dashboard, create_salary_dashboard, create_salaries, dash_link
-from flask_carcas.constants import Levels
+from constants import Levels
 
 @app.route("/")
 @app.route("/index")
@@ -15,9 +15,11 @@ def keyskills():
     page_text = "Ключевые навыки"
     return render_template("keyskills.html", title="Ключевые навыки", page_text=page_text)
 
-@app.route("/salary")
+@app.route("/salary", methods=["GET"])
 def salary():
     page_text = "Распределение зарплат"
+    date_from = request.args.get("date_from")
+    date_to = request.args.get("date_to")
     image = dash_link(create_salary_dashboard(
         create_salaries(Levels.JUNIOR.name),
         create_salaries(Levels.MIDDLE.name),
