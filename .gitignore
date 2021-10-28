@@ -132,3 +132,4 @@ dmypy.json
 .vscode/
 flask_carcas/db_test.py
 
+flask_carcas/test_db.py

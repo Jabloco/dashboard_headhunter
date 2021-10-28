@@ -5,6 +5,30 @@ class Levels(Enum):
     SENIOR = ["senior", "сеньор", "сеньёр", "синьёр", "сениор", "сеньер", "старший"]
     MIDDLE = ["middle", "миддл", "мидл"]
     JUNIOR = ["junior", "джуниор", "младший"]
+
+SLEEP_TIME = 0.3
+
+search_text = [
+    'python junior',
+    'python middle',
+    'python senior',
+    'python lead',
+    'python backend',
+    'python back-end',
+    'python engineer',
+    'python инженер',
+    'python team lead',
+    'python developer',
+    'разработчик python',
+    'программист python',
+    'python-разработчик',
+    'python разработчик',
+    'python-программист',
+    'python программист',
+    'qa automation python',
+    'Senior QA Automation Engineer Python',
+    'Python Django developer'
+    ]
     
 experience = [
     {"id": "noExperience", "name": "Нет опыта"},
