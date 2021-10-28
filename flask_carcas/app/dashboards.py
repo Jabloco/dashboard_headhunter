@@ -21,7 +21,6 @@ def dash_link(figure):
     data = base64.b64encode(buf.getbuffer()).decode("ascii")
     return f'data:image/png;base64,{data}'
 
-
 def create_pie_dashboard(levels_count: dict):
     """
     Функция принимает словарь вида {'junior': count, 'middle': count, 'senior': count}
