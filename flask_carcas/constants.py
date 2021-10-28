@@ -5,7 +5,9 @@ class Levels(Enum):
     SENIOR = ["senior", "сеньор", "сеньёр", "синьёр", "сениор", "сеньер", "старший"]
     MIDDLE = ["middle", "миддл", "мидл"]
     JUNIOR = ["junior", "джуниор", "младший"]
-    
+
+labels = ('Junior', 'Middle', 'Senior')
+
 experience = [
     {"id": "noExperience", "name": "Нет опыта"},
     {"id": "between1And3", "name": "От 1 года до 3 лет"},

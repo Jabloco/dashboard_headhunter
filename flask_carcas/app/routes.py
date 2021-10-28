@@ -20,7 +20,7 @@ def levels_counts(date_from, date_to):
         ).filter(
             Vacancy.created_at.between(date_from, date_to)
         ).all()
-    counts = {elem[0]:elem[1] for elem in levels_counts}
+    counts = {elem[0]: elem[1] for elem in levels_counts}
     return counts
 
 
@@ -35,13 +35,12 @@ def get_date(get_date_from, get_date_to):
     В случае если введенная дата начала позже даты окончания
     тоже подставляем дефолтные значения
     """
-    
-    if get_date_from == '':
+    if get_date_from == '' or get_date_from is None:
         date_from = datetime(2021, 1, 1).date()
     else:
         date_from = datetime.strptime(get_date_from, '%Y-%m-%d').date()
 
-    if get_date_to == '':
+    if get_date_to == ''  or get_date_to is None:
         date_to = date.today()
     else:
         date_to = datetime.strptime(get_date_to, '%Y-%m-%d').date()

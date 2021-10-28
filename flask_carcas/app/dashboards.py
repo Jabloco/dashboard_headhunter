@@ -1,16 +1,19 @@
-import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 
+import matplotlib.pyplot as plt
 
-def dash_link(create_dashboard):
+from constants import labels
+
+
+def dash_link(figure):
     """
     Создает ссылку на изображение для вставки в шаблон html.
 
     Аргументы:
-        create_dashboard - функция создания диаграммы.
+        figure - функция создания диаграммы.
     """
-    fig = create_dashboard
+    fig = figure
     # Save it to a temporary buffer.
     buf = BytesIO()
     fig.savefig(buf, format="png")
@@ -18,11 +21,12 @@ def dash_link(create_dashboard):
     data = base64.b64encode(buf.getbuffer()).decode("ascii")
     return f'data:image/png;base64,{data}'
 
+
 def create_pie_dashboard(levels_count: dict):
     """
     Функция принимает словарь вида {'junior': count, 'middle': count, 'senior': count}
     """
-    labels = 'junior', 'middle', 'senior'
+
     sizes = [levels_count[label.upper()] for label in labels]
 
     figure, ax = plt.subplots()
