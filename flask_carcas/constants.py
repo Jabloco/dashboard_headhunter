@@ -8,6 +8,28 @@ class Levels(Enum):
 
 labels = ('Junior', 'Middle', 'Senior')
 
+search_text = [
+    'python junior',
+    'python middle',
+    'python senior',
+    'python lead',
+    'python backend',
+    'python back-end',
+    'python engineer',
+    'python инженер',
+    'python team lead',
+    'python developer',
+    'разработчик python',
+    'программист python',
+    'python-разработчик',
+    'python разработчик',
+    'python-программист',
+    'python программист',
+    'qa automation python',
+    'Senior QA Automation Engineer Python',
+    'Python Django developer'
+    ]
+
 experience = [
     {"id": "noExperience", "name": "Нет опыта"},
     {"id": "between1And3", "name": "От 1 года до 3 лет"},
