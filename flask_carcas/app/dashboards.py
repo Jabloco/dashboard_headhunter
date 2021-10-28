@@ -11,12 +11,12 @@ def dash_link(figure):
     Создает ссылку на изображение для вставки в шаблон html.
 
     Аргументы:
-        figure - функция создания диаграммы.
+        figure - объект фигуры.
     """
-    fig = figure
+
     # Save it to a temporary buffer.
     buf = BytesIO()
-    fig.savefig(buf, format="png")
+    figure.savefig(buf, format="png")
     # Embed the result in the html output.
     data = base64.b64encode(buf.getbuffer()).decode("ascii")
     return f'data:image/png;base64,{data}'

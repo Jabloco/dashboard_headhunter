@@ -20,7 +20,7 @@ def levels_counts(date_from, date_to):
         ).filter(
             Vacancy.created_at.between(date_from, date_to)
         ).all()
-    counts = {elem[0]: elem[1] for elem in levels_counts}
+    counts = dict(levels_counts)
     return counts
 
 
@@ -40,7 +40,7 @@ def get_date(get_date_from, get_date_to):
     else:
         date_from = datetime.strptime(get_date_from, '%Y-%m-%d').date()
 
-    if get_date_to == ''  or get_date_to is None:
+    if get_date_to == '' or get_date_to is None:
         date_to = date.today()
     else:
         date_to = datetime.strptime(get_date_to, '%Y-%m-%d').date()
