@@ -1,17 +1,15 @@
-import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 
+import matplotlib.pyplot as plt
 import numpy as np
 from pycbrf import ExchangeRates
 from sqlalchemy import case, and_, not_, func
 
 from app.models import Vacancy
 from app import db
+from constants import Levels
 
-
-usd_rate = ExchangeRates()["USD"].rate
-eur_rate = ExchangeRates()["EUR"].rate
 
 def create_salaries(level: str):
     """
@@ -21,6 +19,8 @@ def create_salaries(level: str):
     Аргументы:
         level - уровень вакансии.
     """
+    usd_rate = ExchangeRates()["USD"].rate
+    eur_rate = ExchangeRates()["EUR"].rate
     salaries = {}
     # Создаем case содержащий ЗП для каждой вакансии, исключая вакансии без ЗП.
     total_salary = case(
@@ -36,7 +36,7 @@ def create_salaries(level: str):
     total_salary_rur = case(
         [
             (Vacancy.currency_id == "USD", total_salary * usd_rate),
-            (Vacancy.currency_id == "EUR", total_salary * usd_rate),
+            (Vacancy.currency_id == "EUR", total_salary * eur_rate),
         ],
     ).label("total_salary_rur")
 
@@ -55,26 +55,23 @@ def create_salaries(level: str):
     ).group_by("total_salary").all()
 
     for vacancy in vacancies:
+        _, salary_count, *_ = vacancy
         if vacancy.total_salary_rur is not None:
-            salaries[vacancy.total_salary_rur] = vacancy[1]
+            salaries[vacancy.total_salary_rur] = salary_count
         else:
-            salaries[vacancy.total_salary] = vacancy[1]
+            salaries[vacancy.total_salary] = salary_count
     return salaries
 
 def create_sorted_salaries(salaries: dict):
     """Создает список из количества вакансий по разным диапазонам зарплат."""
-    sorted_salaries = [0, 0, 0, 0, 0]
+    number_of_ranges = 5
+    sorted_salaries = [0 for i in range(number_of_ranges)]
+    salary_step = 50000
     for salary in salaries.keys():
-        if salary <= 50000:
-            sorted_salaries[0] += salaries[salary]
-        if salary > 50000 and salary <= 100000:
-            sorted_salaries[1] += salaries[salary]
-        if salary > 100000 and salary <= 150000:
-            sorted_salaries[2] += salaries[salary]
-        if salary > 150000 and salary <= 200000:
-            sorted_salaries[3] += salaries[salary]
-        if salary > 200000:
-            sorted_salaries[4] += salaries[salary]
+        salary_range = int(salary // salary_step)
+        if salary_range >= number_of_ranges:
+            salary_range = number_of_ranges - 1
+        sorted_salaries[salary_range] += salaries[salary]
     return sorted_salaries
 
 def dash_link(create_dashboard):
@@ -95,9 +92,9 @@ def dash_link(create_dashboard):
 
 def create_pie_dashboard(levels_count: dict):
     """
-    Функция принимает словарь вида {'junior': count, 'middle': count, 'senior': count}
+    Функция принимает словарь вида {'JUNIOR': count, 'MIDDLE': count, 'SENIOR': count}
     """
-    labels = 'junior', 'middle', 'senior'
+    labels = Levels.JUNIOR.name, Levels.MIDDLE.name, Levels.SENIOR.name
     sizes = [levels_count[label] for label in labels]
 
     figure, ax = plt.subplots()
@@ -133,9 +130,9 @@ def create_salary_dashboard(
         "150k - 200k",
         "200k and more"]
     results = {
-        "Junior": junior_salary,
-        "Middle": middle_salary,
-        "Senior": senior_salary
+        Levels.JUNIOR.name: junior_salary,
+        Levels.MIDDLE.name: middle_salary,
+        Levels.SENIOR.name: senior_salary
     }
     labels = list(results.keys())
     data = np.array(list(results.values()))
