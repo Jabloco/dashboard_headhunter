@@ -6,6 +6,8 @@ class Levels(Enum):
     MIDDLE = ["middle", "миддл", "мидл"]
     JUNIOR = ["junior", "джуниор", "младший"]
 
+labels = ('Junior', 'Middle', 'Senior')
+
 SLEEP_TIME = 0.3
 
 search_text = [
@@ -29,7 +31,7 @@ search_text = [
     'Senior QA Automation Engineer Python',
     'Python Django developer'
     ]
-    
+
 experience = [
     {"id": "noExperience", "name": "Нет опыта"},
     {"id": "between1And3", "name": "От 1 года до 3 лет"},
