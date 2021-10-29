@@ -8,7 +8,7 @@ from sqlalchemy import case, and_, not_, func
 
 from app.models import Vacancy
 from app import db
-from constants import Levels
+from constants import Levels, labels
 
 
 def create_salaries(level: str):
@@ -74,18 +74,16 @@ def create_sorted_salaries(salaries: dict):
         sorted_salaries[salary_range] += salaries[salary]
     return sorted_salaries
 
-def dash_link(create_dashboard):
+def dash_link(figure):
     """
     Создает ссылку на изображение для вставки в шаблон html.
 
     Аргументы:
-        create_dashboard - функция создания диаграммы.
+        figure - объект фигуры.
     """
-    fig = create_dashboard
-
     # Save it to a temporary buffer.
     buf = BytesIO()
-    fig.savefig(buf, format="png")
+    figure.savefig(buf, format="png")
     # Embed the result in the html output.
     data = base64.b64encode(buf.getbuffer()).decode("ascii")
     return f'data:image/png;base64,{data}'
@@ -94,8 +92,7 @@ def create_pie_dashboard(levels_count: dict):
     """
     Функция принимает словарь вида {'JUNIOR': count, 'MIDDLE': count, 'SENIOR': count}
     """
-    labels = Levels.JUNIOR.name, Levels.MIDDLE.name, Levels.SENIOR.name
-    sizes = [levels_count[label] for label in labels]
+    sizes = [levels_count[label.upper()] for label in labels]
 
     figure, ax = plt.subplots()
     ax.pie(
