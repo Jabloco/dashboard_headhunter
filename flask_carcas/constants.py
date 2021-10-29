@@ -8,6 +8,8 @@ class Levels(Enum):
 
 labels = ('Junior', 'Middle', 'Senior')
 
+SLEEP_TIME = 0.3
+
 search_text = [
     'python junior',
     'python middle',
