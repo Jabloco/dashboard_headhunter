@@ -1,7 +1,6 @@
-# База данных и файлы миграции.
-erroe.log
+# База данных и логи ошибок
+error.log
 .sqlite3
-migrations/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
