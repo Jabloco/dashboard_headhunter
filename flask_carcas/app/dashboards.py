@@ -38,3 +38,14 @@ def create_pie_dashboard(levels_count: dict):
     )
 
     return figure
+
+def create_keyskills_dashboard(keyskills_count:dict):
+    names = list(keyskills_count.keys())
+    values = list(keyskills_count.values())
+
+    figure, ax = plt.subplots()
+    ax.bar(names, values, animated=True)
+    ax.set_ylabel('Количество упоминаний')
+    plt.xticks(rotation=30, ha='right')
+    
+    return figure
