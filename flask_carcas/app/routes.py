@@ -52,7 +52,7 @@ def keyskills_count(date_from, date_to, keyskills: list):
             )
     else:
         query_skills_counts = query_base.limit(20)
-    
+
     skill_counts = dict(query_skills_counts.all())
     return skill_counts
 
@@ -99,7 +99,8 @@ def keyskills():
     """
     get_date_from = request.args.get("date_from")
     get_date_to = request.args.get("date_to")
-    skills = None  # mock данные
+    skills = request.args.get("skills")
+
     date_from, date_to = get_date(get_date_from, get_date_to)  # проверка и преобразование дат
 
     image = dash_link(create_keyskills_dashboard(keyskills_count(date_from, date_to, skills)))
