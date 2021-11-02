@@ -34,22 +34,23 @@ def keyskills_count(date_from, date_to, keyskills: list):
         то возвращается 20 самых частоупоминаемых навыков
     """
     query_base = db.session.query(
-            KeySkill.name, func.count(vacancy_skill.c.keyskill_id).label('total')
+        KeySkill.name, func.count(vacancy_skill.c.keyskill_id).label('total')
         ).join(
-            vacancy_skill
+        vacancy_skill
         ).join(
-            Vacancy
+        Vacancy
         ).group_by(
-            KeySkill.name
+        KeySkill.name
         ).filter(
-            Vacancy.created_at.between(date_from, date_to)
+        Vacancy.created_at.between(date_from, date_to)
         ).order_by(
-            desc('total'))
+        desc('total')
+        )
 
     if keyskills:
         query_skills_counts = query_base.filter(
             KeySkill.name.in_(keyskills)
-            )
+        )
     else:
         query_skills_counts = query_base.limit(20)
 
@@ -99,7 +100,7 @@ def keyskills():
     """
     get_date_from = request.args.get("date_from")
     get_date_to = request.args.get("date_to")
-    skills = request.args.get("skills")
+    skills = request.args.getlist("skills")
 
     date_from, date_to = get_date(get_date_from, get_date_to)  # проверка и преобразование дат
 

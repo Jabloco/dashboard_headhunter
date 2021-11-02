@@ -24,13 +24,14 @@ def dash_link(figure):
 
 def create_pie_dashboard(levels_count: dict):
     """
-    Функция принимает словарь вида {'junior': count, 'middle': count, 'senior': count}
+    Функция для построения круговой диаграммы
+    Принимает словарь вида {'junior': count, 'middle': count, 'senior': count}
     """
 
     # добавил проверку ключей во входящем словаре и сравнением с контстантой labels
     # иначе если количество ключей не совпадает с labels то падает с ошибкой
-    sizes = [levels_count[label.upper()] for label in labels if label.upper() in levels_count]
     labels_name = [label for label in labels if label.upper() in levels_count]
+    sizes = [levels_count[label.upper()] for label in labels_name]
 
     figure, ax = plt.subplots()
     ax.pie(
@@ -45,8 +46,12 @@ def create_pie_dashboard(levels_count: dict):
 
 
 def create_keyskills_dashboard(keyskills_count: dict):
+    """
+    Функция для построения столбчатой диаграммы по навыкам
+    Принимаетсловарь вида {'skill1': count, 'skill2': count}
+    """
     names = list(keyskills_count.keys())
-    values = list(keyskills_count.values())
+    values = [keyskills_count[name] for name in names]
 
     figure, ax = plt.subplots()
     ax.bar(names, values)
