@@ -15,11 +15,11 @@ def levels_counts(date_from, date_to):
     """
     levels_counts = db.session.query(
         Vacancy.level, func.count(Vacancy.level)
-        ).group_by(
-            Vacancy.level
-        ).filter(
-            Vacancy.created_at.between(date_from, date_to)
-        ).all()
+    ).group_by(
+        Vacancy.level
+    ).filter(
+        Vacancy.created_at.between(date_from, date_to)
+    ).all()
     counts = dict(levels_counts)
     return counts
 
@@ -35,17 +35,17 @@ def keyskills_count(date_from, date_to, keyskills: list):
     """
     query_base = db.session.query(
         KeySkill.name, func.count(vacancy_skill.c.keyskill_id).label('total')
-        ).join(
+    ).join(
         vacancy_skill
-        ).join(
+    ).join(
         Vacancy
-        ).group_by(
+    ).group_by(
         KeySkill.name
-        ).filter(
+    ).filter(
         Vacancy.created_at.between(date_from, date_to)
-        ).order_by(
+    ).order_by(
         desc('total')
-        )
+    )
 
     if keyskills:
         query_skills_counts = query_base.filter(
