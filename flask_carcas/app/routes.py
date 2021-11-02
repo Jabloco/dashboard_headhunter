@@ -6,7 +6,8 @@ from sqlalchemy import func, desc
 from app import app
 from app import db
 from app.models import KeySkill, Vacancy, vacancy_skill
-from app.dashboards import create_pie_dashboard, create_keyskills_dashboard, dash_link
+from app.dashboards import (create_pie_dashboard, create_salary_dashboard, create_salaries, create_keyskills_dashboard, dash_link)
+from constants import Levels
 
 
 def levels_counts(date_from, date_to):
@@ -108,11 +109,16 @@ def keyskills():
 
     return render_template("keyskills.html", title="Ключевые навыки", image=image)
 
-
-@app.route("/salary")
+@app.route("/salary", methods=["GET"])
 def salary():
     page_text = "Распределение зарплат"
-    return render_template("salary.html", title="Распределение зарплат", page_text=page_text)
+    date_from = request.args.get("date_from")
+    date_to = request.args.get("date_to")
+    image = dash_link(create_salary_dashboard(
+        create_salaries(Levels.JUNIOR.name),
+        create_salaries(Levels.MIDDLE.name),
+        create_salaries(Levels.SENIOR.name)))
+    return render_template("salary.html", title="Распределение зарплат", page_text=page_text, image=image)
 
 
 @app.route("/vacancies", methods=["GET"])
