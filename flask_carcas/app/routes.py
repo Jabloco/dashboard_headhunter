@@ -1,12 +1,12 @@
 from datetime import date, datetime
 
 from flask import render_template, request
-from sqlalchemy import func
+from sqlalchemy import func, desc
 
 from app import app
 from app import db
-from app.models import Vacancy
-from app.dashboards import create_pie_dashboard, create_salary_dashboard, create_salaries, dash_link
+from app.models import KeySkill, Vacancy, vacancy_skill
+from app.dashboards import (create_pie_dashboard, create_salary_dashboard, create_salaries, create_keyskills_dashboard, dash_link)
 from constants import Levels
 
 
@@ -16,13 +16,47 @@ def levels_counts(date_from, date_to):
     """
     levels_counts = db.session.query(
         Vacancy.level, func.count(Vacancy.level)
-        ).group_by(
-            Vacancy.level
-        ).filter(
-            Vacancy.created_at.between(date_from, date_to)
-        ).all()
+    ).group_by(
+        Vacancy.level
+    ).filter(
+        Vacancy.created_at.between(date_from, date_to)
+    ).all()
     counts = dict(levels_counts)
     return counts
+
+
+def keyskills_count(date_from, date_to, keyskills: list):
+    """
+    Функция для подсчета навыков.
+    Параметры:
+        date_from - дата фильтрации от
+        date_to - дата фильтрации до
+        keyskills - список навыков которые интересуют. Если список не передается,
+        то возвращается 20 самых частоупоминаемых навыков
+    """
+    query_base = db.session.query(
+        KeySkill.name, func.count(vacancy_skill.c.keyskill_id).label('total')
+    ).join(
+        vacancy_skill
+    ).join(
+        Vacancy
+    ).group_by(
+        KeySkill.name
+    ).filter(
+        Vacancy.created_at.between(date_from, date_to)
+    ).order_by(
+        desc('total')
+    )
+
+    if keyskills:
+        query_skills_counts = query_base.filter(
+            KeySkill.name.in_(keyskills)
+        )
+    else:
+        query_skills_counts = query_base.limit(20)
+
+    skill_counts = dict(query_skills_counts.all())
+    return skill_counts
 
 
 def get_date(get_date_from, get_date_to):
@@ -60,10 +94,20 @@ def index():
     return render_template("index.html", title="О проекте", page_text=page_text)
 
 
-@app.route("/keyskills")
+@app.route("/keyskills", methods=["GET"])
 def keyskills():
-    page_text = "Ключевые навыки"
-    return render_template("keyskills.html", title="Ключевые навыки", page_text=page_text)
+    """
+    Вывод столбчатой диаграммы по ключевым навыкам
+    """
+    get_date_from = request.args.get("date_from")
+    get_date_to = request.args.get("date_to")
+    skills = request.args.getlist("skills")
+
+    date_from, date_to = get_date(get_date_from, get_date_to)  # проверка и преобразование дат
+
+    image = dash_link(create_keyskills_dashboard(keyskills_count(date_from, date_to, skills)))
+
+    return render_template("keyskills.html", title="Ключевые навыки", image=image)
 
 @app.route("/salary", methods=["GET"])
 def salary():
