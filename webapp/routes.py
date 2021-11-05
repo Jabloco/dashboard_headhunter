@@ -3,10 +3,10 @@ from datetime import date, datetime
 from flask import render_template, request
 from sqlalchemy import func, desc
 
-from app import app
-from app import db
-from app.models import KeySkill, Vacancy, vacancy_skill
-from app.dashboards import (create_pie_dashboard, create_salary_dashboard, create_salaries, create_keyskills_dashboard, dash_link)
+from webapp import app
+from webapp import db
+from webapp.models import KeySkill, Vacancy, vacancy_skill
+from webapp.dashboards import (create_pie_dashboard, create_salary_dashboard, create_salaries, create_keyskills_dashboard, dash_link)
 from constants import Levels
 
 
