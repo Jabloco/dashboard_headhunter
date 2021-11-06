@@ -1,6 +1,5 @@
 from celery import Celery
 from celery.schedules import crontab
-import celery
 
 import db_worker
 
@@ -13,4 +12,4 @@ def db_fill():
 @celery_app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     """запуск обновления базы каждые 12 часов. в полночь и 12 дня"""
-    sender.add_periodic_task(crontab(minute=0, hour='*/12'), db_fill.s())
+    sender.add_periodic_task(crontab(minute=0, hour='0,12'), db_fill.s())
