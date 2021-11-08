@@ -7,9 +7,12 @@ celery_app = Celery('tasks', broker=('redis://localhost:6379/0'))
 celery_app.conf.update(
     timezone='Europe/Moscow'
 )
+
+
 @celery_app.task
 def db_fill():
     db_worker.worker()
+
 
 @celery_app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
