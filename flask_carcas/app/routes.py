@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from flask import render_template, request
+from flask import render_template, request, flash
 from sqlalchemy import func, desc
 
 from app import app
@@ -101,13 +101,15 @@ def keyskills():
     """
     get_date_from = request.args.get("date_from")
     get_date_to = request.args.get("date_to")
-    skills = request.args.getlist("skills")
+    get_skills = request.args.getlist("skills[]")
 
     date_from, date_to = get_date(get_date_from, get_date_to)  # проверка и преобразование дат
+    raw_skills = db.session.query(KeySkill.name.distinct()) # получение списка всех скилов
+    skills = [skill[0] for skill in raw_skills]
 
-    image = dash_link(create_keyskills_dashboard(keyskills_count(date_from, date_to, skills)))
+    image = dash_link(create_keyskills_dashboard(keyskills_count(date_from, date_to, get_skills)))
 
-    return render_template("keyskills.html", title="Ключевые навыки", image=image)
+    return render_template("keyskills.html", title="Ключевые навыки", image=image, skills=skills)
 
 @app.route("/salary", methods=["GET"])
 def salary():
