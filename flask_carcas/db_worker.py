@@ -16,10 +16,11 @@ def merge_vacancies_ids(text: str, area_id: int) -> list:
     """
     vacancies_ids_total = []
     for page in range(20):
-        vacancies_ids_on_page, pages = hh.get_vacancies_ids(text, page, area_id)
-        vacancies_ids_total.extend(vacancies_ids_on_page)
-        if (pages - page) <= 1:
-            break
+            vacancies_ids_on_page, pages = hh.get_vacancies_ids(text, page, area_id)
+            if vacancies_ids_on_page:
+                vacancies_ids_total.extend(vacancies_ids_on_page)
+            if (pages - page) <= 1:
+                break
     return vacancies_ids_total
 
 
