@@ -48,9 +48,18 @@
             </div>
         </form>
     </div>
-</div>
+</div><br>
 
 <div class="text-center">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+        <h6 class="display-6">{{ message }}</h6>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
     <img src="{{image}}" alt="Bar dashboard"/>
 </div>
 
