@@ -5,14 +5,13 @@ from flask_migrate import Migrate
 
 from config import Config
 
-app = Flask(__name__)
-app.config.from_object(Config)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
+hh_app = Flask(__name__)
+hh_app.config.from_object(Config)
+db = SQLAlchemy(hh_app)
 from app.models import Area, KeySkill, Vacancy, Employer
+migrate = Migrate(hh_app, db)
 
-migrate = Migrate(app, db)
 
 from app import routes
 

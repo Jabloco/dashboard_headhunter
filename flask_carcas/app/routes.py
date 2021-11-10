@@ -3,7 +3,7 @@ from datetime import date, datetime
 from flask import render_template, request, flash
 from sqlalchemy import func, desc
 
-from app import app
+from app import hh_app
 from app import db
 from app.models import KeySkill, Vacancy, vacancy_skill
 from app.dashboards import (create_pie_dashboard, create_salary_dashboard, create_salaries, create_keyskills_dashboard, dash_link)
@@ -87,14 +87,14 @@ def get_date(get_date_from, get_date_to):
     return date_from, date_to
 
 
-@app.route("/")
-@app.route("/index")
+@hh_app.route("/")
+@hh_app.route("/index")
 def index():
     page_text = "Привет!"
     return render_template("index.html", title="О проекте", page_text=page_text)
 
 
-@app.route("/keyskills", methods=["GET"])
+@hh_app.route("/keyskills", methods=["GET"])
 def keyskills():
     """
     Вывод столбчатой диаграммы по ключевым навыкам
@@ -111,7 +111,7 @@ def keyskills():
 
     return render_template("keyskills.html", title="Ключевые навыки", image=image, skills=skills)
 
-@app.route("/salary", methods=["GET"])
+@hh_app.route("/salary", methods=["GET"])
 def salary():
     page_text = "Распределение зарплат"
     date_from = request.args.get("date_from")
@@ -123,7 +123,7 @@ def salary():
     return render_template("salary.html", title="Распределение зарплат", page_text=page_text, image=image)
 
 
-@app.route("/vacancies", methods=["GET"])
+@hh_app.route("/vacancies", methods=["GET"])
 def vacancies():
     """
     Вывод круговой диаграммы со счетчиком вакансий по уровням
