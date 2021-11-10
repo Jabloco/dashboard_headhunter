@@ -60,15 +60,13 @@ class HeadHunterClient:
             vacancy_page = result.json()
             if 'errors' in vacancy_page:
                 raise ValueError('Запрос не выполнен')
+        except ValueError as error:
+            logging.exception(error)
+            return None, None
         except requests.RequestException as error:
             logging.exception(error)
             return None, None
-        except requests.HTTPError as error:
-            logging.exception(error)
-            return None, None
-        except requests.ConnectionError as error:
-            logging.exception(error)
-            return None, None
+
         vacancy_ids = [vacancy["id"] for vacancy in vacancy_page["items"]]
         page_count = vacancy_page['pages']
         return vacancy_ids, page_count
@@ -125,12 +123,6 @@ class HeadHunterClient:
             logging.exception(error)
             return
         except requests.RequestException as error:
-            logging.exception(error)
-            return
-        except requests.HTTPError as error:
-            logging.exception(error)
-            return
-        except requests.ConnectionError as error:
             logging.exception(error)
             return
 
