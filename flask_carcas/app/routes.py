@@ -1,9 +1,9 @@
 from datetime import date, datetime
 
-from flask import render_template, request
+from flask import render_template, request, flash
 from sqlalchemy import func, desc
 
-from app import app
+from app import hh_app
 from app import db
 from app.models import KeySkill, Vacancy, vacancy_skill
 from app.dashboards import (create_pie_dashboard, create_salary_dashboard, create_salaries, create_keyskills_dashboard, dash_link)
@@ -87,33 +87,49 @@ def get_date(get_date_from, get_date_to):
     return date_from, date_to
 
 
-@app.route("/")
-@app.route("/index")
+@hh_app.route("/")
+@hh_app.route("/index")
 def index():
     page_text = "Привет!"
     return render_template("index.html", title="О проекте", page_text=page_text)
 
 
-@app.route("/keyskills", methods=["GET"])
+@hh_app.route("/keyskills", methods=["GET"])
 def keyskills():
     """
     Вывод столбчатой диаграммы по ключевым навыкам
     """
     get_date_from = request.args.get("date_from")
     get_date_to = request.args.get("date_to")
-    skills = request.args.getlist("skills")
+    get_skills = request.args.getlist("skills[]")
 
     date_from, date_to = get_date(get_date_from, get_date_to)  # проверка и преобразование дат
+    raw_skills = db.session.query(KeySkill.name.distinct()) # получение списка всех скилов
+    skills = [skill[0] for skill in raw_skills]
 
-    image = dash_link(create_keyskills_dashboard(keyskills_count(date_from, date_to, skills)))
+    image = dash_link(create_keyskills_dashboard(keyskills_count(date_from, date_to, get_skills)))
+    
+    date_to_str = date_to.strftime('%d.%m.%Y')
+    date_from_str = date_from.strftime('%d.%m.%Y')
+    if not get_date_from and not get_date_to:
+        flash("Данные за все время:")
+    elif not get_date_from:
+        flash(f"Данные по {date_to_str}:")
+    elif not get_date_to:
+        flash(f"Данные с {date_from_str}:")
+    else:
+        flash(f"Данные с {date_from_str} по {date_to_str}:")
 
-    return render_template("keyskills.html", title="Ключевые навыки", image=image)
+    return render_template(
+        "keyskills.html",
+        title="Ключевые навыки",
+        image=image,
+        skills=skills
+        )
 
-@app.route("/salary", methods=["GET"])
+@hh_app.route("/salary", methods=["GET"])
 def salary():
     page_text = "Распределение зарплат"
-    date_from = request.args.get("date_from")
-    date_to = request.args.get("date_to")
     image = dash_link(create_salary_dashboard(
         create_salaries(Levels.JUNIOR.name),
         create_salaries(Levels.MIDDLE.name),
@@ -121,7 +137,7 @@ def salary():
     return render_template("salary.html", title="Распределение зарплат", page_text=page_text, image=image)
 
 
-@app.route("/vacancies", methods=["GET"])
+@hh_app.route("/vacancies", methods=["GET"])
 def vacancies():
     """
     Вывод круговой диаграммы со счетчиком вакансий по уровням
