@@ -65,4 +65,4 @@ cmd\bash
 export FLASK_APP=dashboard_hh.py
 flask run
 ```
-
+9. В адресной строке браузера вводим 127.0.0.1:5000, выбираем любой график и ЛЮБУЕМСЯ :smile:
