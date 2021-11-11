@@ -108,14 +108,28 @@ def keyskills():
     skills = [skill[0] for skill in raw_skills]
 
     image = dash_link(create_keyskills_dashboard(keyskills_count(date_from, date_to, get_skills)))
+    
+    date_to_str = date_to.strftime('%d.%m.%Y')
+    date_from_str = date_from.strftime('%d.%m.%Y')
+    if not get_date_from and not get_date_to:
+        flash("Данные за все время:")
+    elif not get_date_from:
+        flash(f"Данные по {date_to_str}:")
+    elif not get_date_to:
+        flash(f"Данные с {date_from_str}:")
+    else:
+        flash(f"Данные с {date_from_str} по {date_to_str}:")
 
-    return render_template("keyskills.html", title="Ключевые навыки", image=image, skills=skills)
+    return render_template(
+        "keyskills.html",
+        title="Ключевые навыки",
+        image=image,
+        skills=skills
+        )
 
 @hh_app.route("/salary", methods=["GET"])
 def salary():
     page_text = "Распределение зарплат"
-    date_from = request.args.get("date_from")
-    date_to = request.args.get("date_to")
     image = dash_link(create_salary_dashboard(
         create_salaries(Levels.JUNIOR.name),
         create_salaries(Levels.MIDDLE.name),
