@@ -42,7 +42,16 @@ def write_to_db(vacancies_ids):
         if vacancy_detail:
             area = Area.insert(vacancy_detail['area_id'], vacancy_detail['area_name'])
 
-            employer = Employer.insert(vacancy_detail['employer_id'], vacancy_detail['employer_name'])
+            """
+            Возможна ситуация что работодатель уже есть в базе но сменил имя
+            Обрабатываем данную ситуацию
+            """
+            # is_employer_add = Employer.query.filter_by(hh_id=vacancy_detail['employer_id']).first()
+            # пытаемся получить работодателя из базы
+            employer = Employer.query.filter_by(hh_id=vacancy_detail['employer_id']).first()
+            # если работника нет в базе, то пишем
+            if employer is None:
+                employer = Employer.insert(vacancy_detail['employer_id'], vacancy_detail['employer_name'])
 
             vacancy_obj = Vacancy.insert(
                 vacancy_detail['hh_id'],
