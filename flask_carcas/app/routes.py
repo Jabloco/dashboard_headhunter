@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from flask import render_template, request
+from flask import render_template, request, flash
 from sqlalchemy import func, desc
 
 from app import hh_app
