@@ -9,14 +9,21 @@
 * Модулей api_client и db_worker, которые позволяют получать данные с hh.ru и писать их в базу
 * flask-приложения для отображения графиков
 
+## Использованные библиотеки:
+* SQLAlchemy и Flask-SQLAlchemy - для взаимодействия с СУБД
+* requests - для запросов к веб-ресурсам (api)
+* Flask - для реализации веб-приложения
+* celery[redis] - для запуска сбора данных по рассписанию
+* и [многие другие](https://github.com/Jabloco/dashboard_headhunter/blob/main/requirements.txt)
+
 ## Для запуска необходимо:
 :white_check_mark: Собственно сам Python    
-:white_check_mark: Redis    
+:white_check_mark: Redis (при деплое)    
 :white_check_mark: SQLite    
 :white_check_mark: Все зависимости из requirements.txt    
 
 ## Как запустить:
-1. Ставим Python, Redis, SQLite
+1. Ставим Python, Redis (при деплое), SQLite
 2. Клонируем данный репозиторий.    
 3. Заходим в консоль. Переходим в папку приложения.    
     * если используете venv создайте и запустите окружение
@@ -65,4 +72,4 @@ cmd\bash
 export FLASK_APP=dashboard_hh.py
 flask run
 ```
-9. В адресной строке браузера вводим 127.0.0.1:5000, выбираем любой график и ЛЮБУЕМСЯ :smile:
+9. В адресной строке браузера вводим [127.0.0.1:5000](http://127.0.0.1:5000), выбираем любой график и ЛЮБУЕМСЯ :smile:
