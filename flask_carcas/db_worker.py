@@ -46,7 +46,6 @@ def write_to_db(vacancies_ids):
             Возможна ситуация что работодатель уже есть в базе но сменил имя
             Обрабатываем данную ситуацию
             """
-            # is_employer_add = Employer.query.filter_by(hh_id=vacancy_detail['employer_id']).first()
             # пытаемся получить работодателя из базы
             employer = Employer.query.filter_by(hh_id=vacancy_detail['employer_id']).first()
             # если работника нет в базе, то пишем
