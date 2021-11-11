@@ -23,8 +23,8 @@ class HeadHunterClient:
         time.sleep(SLEEP_TIME)
         try:
             req = requests.get(f'{self.API_BASE_URL}{self.AREAS_LIST_PATH}')
-            answer = req.json()  # декодируем и приводим к питоновскому словарю
             req.raise_for_status()
+            answer = req.json()  # декодируем и приводим к питоновскому словарю
             if 'errors' in answer:
                 raise ValueError('Запрос не выполнен')
         except ValueError as error:
@@ -56,13 +56,17 @@ class HeadHunterClient:
         time.sleep(SLEEP_TIME)
         try:
             result = requests.get(f'{self.API_BASE_URL}{self.VACANCIES_LIST_PATH}', params=params)
+            result.raise_for_status()
+            vacancy_page = result.json()
+            if 'errors' in vacancy_page:
+                raise ValueError('Запрос не выполнен')
+        except ValueError as error:
+            logging.exception(error)
+            return None, None
         except requests.RequestException as error:
             logging.exception(error)
-            return
-        result.raise_for_status()
-        vacancy_page = result.json()
-        if 'errors' in vacancy_page:
-            raise ValueError('Запрос не выполнен')
+            return None, None
+
         vacancy_ids = [vacancy["id"] for vacancy in vacancy_page["items"]]
         page_count = vacancy_page['pages']
         return vacancy_ids, page_count
@@ -111,8 +115,8 @@ class HeadHunterClient:
         # делаем запрос
         try:
             req = requests.get(f'{self.API_BASE_URL}{self.VACANCIES_LIST_PATH}{vacancy_id}', params)
-            answer = req.json()  # декодируем и приводим к питоновскому словарю
             req.raise_for_status()
+            answer = req.json()  # декодируем и приводим к питоновскому словарю
             if 'errors' in answer:
                 raise ValueError('Запрос не выполнен')
         except ValueError as error:
@@ -156,7 +160,6 @@ class HeadHunterClient:
                     'employer_name': answer['employer']['name']
                 }
             )
-            
 
         # проверяем зарплату и дополняем словарь
         if answer['salary'] is None:

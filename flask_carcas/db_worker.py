@@ -17,7 +17,8 @@ def merge_vacancies_ids(text: str, area_id: int) -> list:
     vacancies_ids_total = []
     for page in range(20):
         vacancies_ids_on_page, pages = hh.get_vacancies_ids(text, page, area_id)
-        vacancies_ids_total.extend(vacancies_ids_on_page)
+        if vacancies_ids_on_page:
+            vacancies_ids_total.extend(vacancies_ids_on_page)
         if (pages - page) <= 1:
             break
     return vacancies_ids_total
@@ -31,8 +32,14 @@ def write_to_db(vacancies_ids):
         Если нет то будем запрашивать детали вакансии.
         """
         is_vacancy_add = Vacancy.query.filter_by(hh_id=vacancy_id).first()
-        if is_vacancy_add is None:
-            vacancy_detail = hh.get_vacancy_detail(vacancy_id)
+
+        # если вакансия локальной БД переходим к следующей
+        if is_vacancy_add:
+            continue
+
+        vacancy_detail = hh.get_vacancy_detail(vacancy_id)
+        # проверяем получили ли мы данные, если да то пишем в БД
+        if vacancy_detail:
             area = Area.insert(vacancy_detail['area_id'], vacancy_detail['area_name'])
 
             employer = Employer.insert(vacancy_detail['employer_id'], vacancy_detail['employer_name'])
