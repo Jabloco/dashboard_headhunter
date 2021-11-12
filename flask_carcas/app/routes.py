@@ -147,6 +147,17 @@ def vacancies():
 
     date_from, date_to = get_date(get_date_from, get_date_to)  # проверка и преобразование дат
 
+    date_to_str = date_to.strftime('%d.%m.%Y')
+    date_from_str = date_from.strftime('%d.%m.%Y')
+    if not get_date_from and not get_date_to:
+        flash("Данные за все время:")
+    elif not get_date_from:
+        flash(f"Данные по {date_to_str}:")
+    elif not get_date_to:
+        flash(f"Данные с {date_from_str}:")
+    else:
+        flash(f"Данные с {date_from_str} по {date_to_str}:")
+
     image = dash_link(create_pie_dashboard(levels_counts(date_from, date_to)))
 
     return render_template("vacancies.html", title="Количество вакансий по уровням", image=image)
