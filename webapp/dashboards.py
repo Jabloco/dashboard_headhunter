@@ -6,7 +6,7 @@ import numpy as np
 from pycbrf import ExchangeRates
 from sqlalchemy import case, and_, not_, func
 
-from models import Vacancy
+from webapp.models import Vacancy
 from webapp import db
 from constants import Levels, labels
 
