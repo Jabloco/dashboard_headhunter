@@ -9,7 +9,7 @@ from config import Config
 hh_app = Flask(__name__)
 hh_app.config.from_object(Config)
 db = SQLAlchemy(hh_app)
-from webapp.models import Area, KeySkill, Vacancy, Employer
+# from models import Area, KeySkill, Vacancy, Employer
 migrate = Migrate(hh_app, db)
 
 from webapp import routes
