@@ -67,7 +67,12 @@ python3 db_worker.py
 Что бы не попасть в бан от api число запросов сокращено до 3 в секунду.    
 7. Если совсем не в терпеж, а посмотреть на графики хочется работу воркера можно прервать с помощью Ctrl + C в консоли    
 8. Для запуска веб части делаем    
-cmd\bash
+cmd
+```
+set FLASK_APP=dashboard_hh.py
+flask run
+```
+bash
 ```
 export FLASK_APP=dashboard_hh.py
 flask run
