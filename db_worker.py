@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from app.models import Employer, Vacancy, Area, keyskill_vacancy
+from webapp.models import Employer, Vacancy, Area, keyskill_vacancy
 from api_client import HeadHunterClient
 from constants import search_text
 
