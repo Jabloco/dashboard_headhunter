@@ -1,6 +1,4 @@
-# База данных и логи ошибок
-error.log
-.sqlite3
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -131,9 +129,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-*.sqlite3
-.vscode/settings.json
-.vscode/
-flask_carcas/db_test.py
 
-flask_carcas/test_db.py
+*.sqlite3
+/.vscode

@@ -3,7 +3,7 @@ from os import name
 
 import sqlalchemy.orm.exc
 
-from app import db
+from webapp import db
 
 
 logging.basicConfig(handlers=[logging.FileHandler('error.log', 'a', 'utf-8')],
